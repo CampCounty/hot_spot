@@ -17,3 +17,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+  - assets/
+  - assets/images/
+  - assets/images/hintergründe/
