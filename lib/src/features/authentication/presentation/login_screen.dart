@@ -27,16 +27,23 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 32),
                 TextFormField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Email",
-                  ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide:
+                            BorderSide(color: Color.fromARGB(255, 2, 247, 165)),
+                      ),
+                      labelText: "Email",
+                      labelStyle: TextStyle(color: Colors.black)),
                 ),
                 SizedBox(height: 24),
                 TextFormField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Passwort",
-                  ),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 2, 247, 165))),
+                      labelText: "Passwort",
+                      labelStyle: TextStyle(color: Colors.black)),
                 )
               ],
             )),
