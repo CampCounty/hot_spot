@@ -1,6 +1,6 @@
-import '../domain/fang_eintragen.dart';
+import '../features/overview/domain/fang_eintragen.dart';
 
-import '../domain/profile.dart';
+import '../features/overview/domain/profile.dart';
 
 abstract class DatabaseRepository {
   List<Fang> getUserFaenge(Profile profile);

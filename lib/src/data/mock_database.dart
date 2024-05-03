@@ -1,6 +1,6 @@
-import '../domain/fang_eintragen.dart';
+import '../features/overview/domain/fang_eintragen.dart';
 
-import '../domain/profile.dart';
+import '../features/overview/domain/profile.dart';
 import 'database_repository.dart';
 
 class MockDatabase implements DatabaseRepository {
