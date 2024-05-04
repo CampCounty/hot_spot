@@ -1,4 +1,4 @@
-import '../features/overview/domain/fang_eintragen.dart';
+import 'package:hot_spot/src/features/overview/domain/fang_eintragen.dart';
 
 import '../features/overview/domain/profile.dart';
 import 'database_repository.dart';

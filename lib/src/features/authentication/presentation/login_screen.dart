@@ -23,12 +23,21 @@ class LoginScreen extends StatelessWidget {
             child: Form(
                 child: Column(
               children: [
-                Center(child: Image.network("https://imgur.com/ClS7mSV.png")),
-                SizedBox(height: 32),
+                Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Image.network("https://imgur.com/ClS7mSV.png"),
+                )),
+                SizedBox(height: 24),
+                const Text(
+                  "Login",
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
+                ),
+                SizedBox(height: 80),
                 TextFormField(
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         borderSide:
                             BorderSide(color: Color.fromARGB(255, 2, 247, 165)),
                       ),
@@ -39,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                 TextFormField(
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide(
                               color: Color.fromARGB(255, 2, 247, 165))),
                       labelText: "Passwort",
