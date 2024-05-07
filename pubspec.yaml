@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
+  fan_floating_menu: ^0.0.1
   flutter:
     sdk: flutter
 
