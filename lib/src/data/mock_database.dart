@@ -1,7 +1,7 @@
 import 'package:hot_spot/src/features/overview/domain/fang_eintragen.dart';
 
-import '../features/overview/domain/profile.dart';
-import 'database_repository.dart';
+import 'package:hot_spot/src/features/overview/domain/profile.dart';
+import 'package:hot_spot/src/data/database_repository.dart';
 
 class MockDatabase implements DatabaseRepository {
   List<Profile> profile = [];

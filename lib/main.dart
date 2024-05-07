@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hot_spot/src/data/mock_database.dart';
 import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/sign_up_screen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    home: LoginScreen(),
+  MockDatabase mockDatabase = MockDatabase();
+  runApp(MaterialApp(
+    home: LoginScreen(
+      databaseRepository: mockDatabase,
+    ),
   ));
 }
