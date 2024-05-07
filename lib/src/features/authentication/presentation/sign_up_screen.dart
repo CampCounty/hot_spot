@@ -9,54 +9,84 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                'assets/images/hintergründe/Blancscreen.png',
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/hintergründe/Blancscreen.png',
+                ),
+                fit: BoxFit.cover,
               ),
-              fit: BoxFit.cover,
             ),
           ),
-        ),
-        SingleChildScrollView(
-          child: Padding(
-            padding: (EdgeInsets.all(16)),
-            child: Form(
-                child: Column(
-              children: [
-                Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Image.network("https://imgur.com/ClS7mSV.png"),
-                )),
-                SizedBox(height: 32),
-                TextFormField(
-                  decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 2, 247, 165)),
-                      ),
-                      labelText: "Email",
-                      labelStyle: TextStyle(color: Colors.black)),
-                ),
-                SizedBox(height: 24),
-                TextFormField(
-                  decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+          SingleChildScrollView(
+            child: Padding(
+              padding: (EdgeInsets.all(16)),
+              child: Form(
+                  child: Column(
+                children: [
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Image.network("https://imgur.com/ClS7mSV.png"),
+                  )),
+                  SizedBox(height: 24),
+                  const Text(
+                    "Registrieren",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
+                  ),
+                  SizedBox(height: 80),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 2, 247, 165))),
-                      labelText: "Passwort",
-                      labelStyle: TextStyle(color: Colors.black)),
-                )
-              ],
-            )),
+                              color: Color.fromARGB(255, 2, 247, 165)),
+                        ),
+                        labelText: "Email",
+                        labelStyle: TextStyle(color: Colors.black)),
+                  ),
+                  SizedBox(height: 24),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 2, 247, 165))),
+                        labelText: "Passwort",
+                        labelStyle: TextStyle(color: Colors.black)),
+                  ),
+                  SizedBox(height: 24),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 2, 247, 165))),
+                        labelText: "Passwort wiederholen",
+                        labelStyle: TextStyle(color: Colors.black)),
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle button press here (e.g., form submission)
+                    },
+                    child: Text('Login'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      backgroundColor: Color.fromARGB(
+                          255, 168, 241, 172), // Set the button color to green
+                    ),
+                  )
+                ],
+              )),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
