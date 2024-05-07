@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/presentation/signup_confirm.dart';
 
 class SignupScreen extends StatelessWidget {
   final DatabaseRepository databaseRepository;
@@ -72,9 +73,15 @@ class SignupScreen extends StatelessWidget {
                   SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignupConfirmScreen(
+                                    databaseRepository: databaseRepository,
+                                  )));
                       // Handle button press here (e.g., form submission)
                     },
-                    child: Text('Login'),
+                    child: Text('Registrieren'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: Color.fromARGB(

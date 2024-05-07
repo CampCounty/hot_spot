@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignupConfirmScreen extends StatelessWidget {
   final DatabaseRepository databaseRepository;
-  const LoginScreen({super.key, required this.databaseRepository});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
+  const SignupConfirmScreen({super.key, required this.databaseRepository});
 
-class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,34 +35,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   )),
                   SizedBox(height: 24),
                   const Text(
-                    "Login",
+                    "Registrierung erfolgreich",
                     style:
-                        TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
+                        TextStyle(fontWeight: FontWeight.w400, fontSize: 14.0),
                   ),
-                  SizedBox(height: 80),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 2, 247, 165)),
-                        ),
-                        labelText: "Email",
-                        labelStyle: TextStyle(color: Colors.black)),
+                  SizedBox(height: 48),
+                  const Text(
+                    "Willkommen bei Hot Spot",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0),
                   ),
-                  SizedBox(height: 24),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 2, 247, 165))),
-                        labelText: "Passwort",
-                        labelStyle: TextStyle(color: Colors.black)),
-                  ),
-                  SizedBox(height: 24),
+                  SizedBox(height: 440),
                   ElevatedButton(
                     onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen(
+                                    databaseRepository: databaseRepository,
+                                  )));
                       // Handle button press here (e.g., form submission)
                     },
                     child: Text('Login'),
