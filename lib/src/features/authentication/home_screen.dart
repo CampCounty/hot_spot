@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Profil'),
             FanMenuItem(
                 onTap: () {},
-                icon: Icons.person_2_rounded,
+                icon: Icons.waves_outlined,
                 menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
                 title: 'Gewässer'),
           ],

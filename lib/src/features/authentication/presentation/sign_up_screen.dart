@@ -45,7 +45,7 @@ class SignupScreen extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 2, 247, 165)),
+                              color: Color.fromARGB(255, 49, 117, 52)),
                         ),
                         labelText: "Email",
                         labelStyle: TextStyle(color: Colors.black)),
@@ -56,7 +56,7 @@ class SignupScreen extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
-                                color: Color.fromARGB(255, 2, 247, 165))),
+                                color: Color.fromARGB(255, 49, 117, 52))),
                         labelText: "Passwort",
                         labelStyle: TextStyle(color: Colors.black)),
                   ),
@@ -66,7 +66,7 @@ class SignupScreen extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
-                                color: Color.fromARGB(255, 2, 247, 165))),
+                                color: Color.fromARGB(255, 49, 117, 52))),
                         labelText: "Passwort wiederholen",
                         labelStyle: TextStyle(color: Colors.black)),
                   ),
@@ -85,7 +85,7 @@ class SignupScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: Color.fromARGB(
-                          255, 168, 241, 172), // Set the button color to green
+                          255, 49, 117, 52), // Set the button color to green
                     ),
                   )
                 ],
