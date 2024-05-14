@@ -2,15 +2,15 @@ import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
-class HomeScreen extends StatefulWidget {
+class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
-  const HomeScreen({super.key, required this.databaseRepository});
+  const Profile({super.key, required this.databaseRepository});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,16 +59,23 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: (EdgeInsets.all(16)),
               child: Form(
-                  child: Column(
-                children: [
-                  Center(
+                child: Column(
+                  children: [
+                    Center(
                       child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.network("https://imgur.com/ClS7mSV.png"),
-                  )),
-                  SizedBox(height: 20),
-                ],
-              )),
+                        padding: const EdgeInsets.all(32.0),
+                        child: Image.network("https://imgur.com/ClS7mSV.png"),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    const Text(
+                      "Profil",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w800, fontSize: 40.0),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

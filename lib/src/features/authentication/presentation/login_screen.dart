@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(32.0),
                     child: Image.network("https://imgur.com/ClS7mSV.png"),
                   )),
-                  SizedBox(height: 24),
+                  SizedBox(height: 8),
                   const Text(
                     "Login",
                     style:

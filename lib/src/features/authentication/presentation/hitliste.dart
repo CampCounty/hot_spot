@@ -1,16 +1,17 @@
 import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
-class HomeScreen extends StatefulWidget {
+class Hitliste extends StatefulWidget {
   final DatabaseRepository databaseRepository;
-  const HomeScreen({super.key, required this.databaseRepository});
+  const Hitliste({super.key, required this.databaseRepository});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Hitliste> createState() => _HitlisteState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HitlisteState extends State<Hitliste> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +63,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                 children: [
                   Center(
-                      child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.network("https://imgur.com/ClS7mSV.png"),
-                  )),
-                  SizedBox(height: 20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Image.network("https://imgur.com/ClS7mSV.png"),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  const Text(
+                    "Hitliste",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
+                  ),
+                  SizedBox(height: 10),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.databaseRepository.getFaenge().length,
+                    itemBuilder: (context, index) {
+                      return Text(
+                        widget.databaseRepository.getFaenge()[index].userID,
+                      );
+                    },
+                  )
                 ],
               )),
             ),

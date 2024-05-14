@@ -2,15 +2,15 @@ import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
-class HomeScreen extends StatefulWidget {
+class Gewaesser extends StatefulWidget {
   final DatabaseRepository databaseRepository;
-  const HomeScreen({super.key, required this.databaseRepository});
+  const Gewaesser({super.key, required this.databaseRepository});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Gewaesser> createState() => _GewaesserState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _GewaesserState extends State<Gewaesser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +62,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                 children: [
                   Center(
-                      child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.network("https://imgur.com/ClS7mSV.png"),
-                  )),
-                  SizedBox(height: 20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Image.network("https://imgur.com/ClS7mSV.png"),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  const Text(
+                    "Gewässer",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
+                  ),
                 ],
               )),
             ),
