@@ -87,6 +87,12 @@ class MockDatabase implements DatabaseRepository {
   ];
 
   @override
+  Future<List<Fang>> getFang() async {
+    await Future.delayed(Duration(seconds: 2));
+    return faenge;
+  }
+
+  @override
   List<Fang> getFaenge() {
     return faenge;
   }

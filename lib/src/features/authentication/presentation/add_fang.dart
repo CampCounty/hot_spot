@@ -73,6 +73,67 @@ class _AddFangState extends State<AddFang> {
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
+                  SizedBox(height: 24),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 39, 39, 39),
+                        ),
+                      ),
+                      labelText: "Fischart",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 39, 39, 39),
+                        ),
+                      ),
+                      labelText: "Groesse",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 39, 39, 39),
+                        ),
+                      ),
+                      labelText: "Datum",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(2255, 39, 39, 39),
+                        ),
+                      ),
+                      labelText: "Uhrzeit",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 39, 39, 39),
+                        ),
+                      ),
+                      labelText: "Gewaesser",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ],
               )),
             ),

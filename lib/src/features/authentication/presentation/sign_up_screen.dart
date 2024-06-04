@@ -5,7 +5,10 @@ import 'package:hot_spot/src/features/authentication/presentation/signup_confirm
 class SignupScreen extends StatelessWidget {
   final DatabaseRepository databaseRepository;
 
-  const SignupScreen({super.key, required this.databaseRepository});
+   SignupScreen({super.key, required this.databaseRepository});
+
+
+  
 
   @override
   Widget build(BuildContext context) {
