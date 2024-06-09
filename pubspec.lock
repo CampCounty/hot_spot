@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  drop_menu:
+    dependency: "direct main"
+    description:
+      name: drop_menu
+      sha256: "74652360b9591197fbbfee2be2532392ca58c0b6a1b7b8b9f2290cc1517c9789"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   fake_async:
     dependency: transitive
     description:

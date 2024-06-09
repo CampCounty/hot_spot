@@ -1,7 +1,7 @@
 class Angelart {
-  String methode;
+  String angelmethode;
 
   Angelart({
-    required this.methode,
+    required this.angelmethode,
   });
 }

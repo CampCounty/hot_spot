@@ -1,6 +1,7 @@
 import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:drop_menu/drop_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -59,16 +60,18 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: (EdgeInsets.all(16)),
               child: Form(
-                  child: Column(
-                children: [
-                  Center(
+                child: Column(
+                  children: [
+                    Center(
                       child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.network("https://imgur.com/ClS7mSV.png"),
-                  )),
-                  SizedBox(height: 20),
-                ],
-              )),
+                        padding: const EdgeInsets.all(32.0),
+                        child: Image.network("https://imgur.com/ClS7mSV.png"),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

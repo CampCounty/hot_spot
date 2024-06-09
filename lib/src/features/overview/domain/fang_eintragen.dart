@@ -1,3 +1,5 @@
+import 'package:hot_spot/src/features/overview/domain/fischarten.dart';
+
 import 'angelarten.dart';
 import 'koeder.dart';
 
@@ -6,7 +8,7 @@ class Fang {
   String gewaesser;
   String datum;
   String uhrzeit;
-  String fischart;
+  List<Fischarten> fischart;
   List<Angelart> angelart;
   List<Koeder> bait;
   double groesse;
