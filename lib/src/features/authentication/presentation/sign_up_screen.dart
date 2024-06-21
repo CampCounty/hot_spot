@@ -5,10 +5,7 @@ import 'package:hot_spot/src/features/authentication/presentation/signup_confirm
 class SignupScreen extends StatelessWidget {
   final DatabaseRepository databaseRepository;
 
-   SignupScreen({super.key, required this.databaseRepository});
-
-
-  
+  SignupScreen({super.key, required this.databaseRepository});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +29,12 @@ class SignupScreen extends StatelessWidget {
                   child: Column(
                 children: [
                   Center(
-                      child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Image.network("https://imgur.com/ClS7mSV.png"),
-                  )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Image.asset(
+                          'assets/images/hintergründe/hslogo 5.png'),
+                    ),
+                  ),
                   SizedBox(height: 24),
                   const Text(
                     "Registrieren",

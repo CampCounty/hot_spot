@@ -116,7 +116,7 @@ class MockDatabase implements DatabaseRepository {
     'Thüringen',
   ];
 
-  List<String> fischarten = [
+  List<String> fischArten = [
     'Aal',
     'Aland',
     'Äsche',
@@ -201,22 +201,33 @@ class MockDatabase implements DatabaseRepository {
   ];
 
   Future<List<Fang>> getFang() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     return faenge;
   }
 
   @override
-  List<Fang> getFaenge() {
+  Future<List<Fang>> getFaenge() async {
+    await Future.delayed(const Duration(seconds: 1));
     return faenge;
   }
 
   @override
-  void addFang(Fang newFang) {
+  Future<List<String>> getFischArten() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return fischArten;
+  }
+
+  @override
+  Future<void> addFang(Fang newFang) async {
+    await Future.delayed(const Duration(seconds: 1));
+
     faenge.add(newFang);
   }
 
   @override
-  List<Fang> getUserFaenge(Profile profile) {
+  Future<List<Fang>> getUserFaenge(Profile profile) async {
+    await Future.delayed(const Duration(seconds: 1));
+
     List<Fang> ausgewaehlteFaenge = [];
     for (Fang fang in faenge) {
       if (fang.userID == profile.userID) {

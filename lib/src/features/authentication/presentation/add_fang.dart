@@ -1,4 +1,3 @@
-import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
@@ -14,35 +13,6 @@ class _AddFangState extends State<AddFang> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(48.0),
-        child: FanFloatingMenu(
-          expandItemsCurve: Curves.elasticInOut,
-          toggleButtonColor: Color.fromARGB(255, 41, 64, 42),
-          menuItems: [
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.set_meal_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Fang hinzufügen'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.waves_outlined,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Gewässer'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.emoji_events_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Hitliste'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.person_2_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Profil'),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
           Container(
@@ -57,82 +27,51 @@ class _AddFangState extends State<AddFang> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: const EdgeInsets.all(16),
               child: Form(
                   child: Column(
                 children: [
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: Image.network("https://imgur.com/ClS7mSV.png"),
+                      child: Image.asset(
+                        "assets/images/hintergründe/hslogo 5.png",
+                        width: 200,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text(
                     "Fang eintragen",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
-                  SizedBox(height: 24),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 39, 39, 39),
-                        ),
-                      ),
-                      labelText: "Fischart",
-                      labelStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 39, 39, 39),
-                        ),
-                      ),
-                      labelText: "Groesse",
-                      labelStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 39, 39, 39),
-                        ),
-                      ),
-                      labelText: "Datum",
-                      labelStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(2255, 39, 39, 39),
-                        ),
-                      ),
-                      labelText: "Uhrzeit",
-                      labelStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 39, 39, 39),
-                        ),
-                      ),
-                      labelText: "Gewaesser",
-                      labelStyle: TextStyle(color: Colors.black),
-                    ),
+                  const SizedBox(height: 24),
+                  FutureBuilder(
+                    future: widget.databaseRepository.getFischArten(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.done) {
+                        // FALL: Future ist komplett und hat Daten!
+                        List<String> fischarten = snapshot.data!;
+                        return DropdownMenu(
+                          width: 150,
+                          label: const Text('Fischart'),
+                          dropdownMenuEntries:
+                              fischarten.map((String fischArt) {
+                            return DropdownMenuEntry(
+                                value: fischArt, label: fischArt);
+                          }).toList(),
+                        );
+                      } else if (snapshot.connectionState !=
+                          ConnectionState.done) {
+                        // FALL: Sind noch im Ladezustand
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        // FALL: Es gab nen Fehler
+                        return const Icon(Icons.error);
+                      }
+                    },
                   ),
                 ],
               )),

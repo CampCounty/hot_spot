@@ -1,6 +1,4 @@
-import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
 class Hitliste extends StatefulWidget {
@@ -15,35 +13,6 @@ class _HitlisteState extends State<Hitliste> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(48.0),
-        child: FanFloatingMenu(
-          expandItemsCurve: Curves.elasticInOut,
-          toggleButtonColor: Color.fromARGB(255, 41, 64, 42),
-          menuItems: [
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.set_meal_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Fang hinzufügen'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.waves_outlined,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Gewässer'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.emoji_events_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Hitliste'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.person_2_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Profil'),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
           Container(
@@ -58,32 +27,33 @@ class _HitlisteState extends State<Hitliste> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: const EdgeInsets.all(16),
               child: Form(
                   child: Column(
                 children: [
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Image.network("https://imgur.com/ClS7mSV.png"),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Image.asset(
+                          'assets/images/hintergründe/hslogo 5.png'),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text(
                     "Hitliste",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
-                  SizedBox(height: 10),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: widget.databaseRepository.getFaenge().length,
-                    itemBuilder: (context, index) {
-                      return Text(
-                        widget.databaseRepository.getFaenge()[index].userID,
-                      );
-                    },
-                  )
+                  const SizedBox(height: 10),
+                  // ListView.builder(
+                  //   shrinkWrap: true,
+                  //   itemCount: widget.databaseRepository.getFaenge().length,
+                  //   itemBuilder: (context, index) {
+                  //     return Text(
+                  //       widget.databaseRepository.getFaenge()[index].userID,
+                  //     );
+                  //   },
+                  // )
                 ],
               )),
             ),

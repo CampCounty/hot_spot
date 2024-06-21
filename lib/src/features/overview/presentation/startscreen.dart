@@ -25,13 +25,13 @@ class StartScreen extends StatelessWidget {
           Positioned(
             top: 200,
             left: 80,
-            child: Container(
+            child: SizedBox(
+              height: 250,
+              width: 250,
               child: Image.asset(
                 'assets/images/hintergründe/hslogo 5.png',
                 fit: BoxFit.cover,
               ),
-              height: 250,
-              width: 250,
             ),
           ),
         ],

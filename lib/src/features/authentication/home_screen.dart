@@ -1,7 +1,5 @@
-import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:drop_menu/drop_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -15,34 +13,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(48.0),
-        child: FanFloatingMenu(
-          expandItemsCurve: Curves.elasticInOut,
-          toggleButtonColor: Color.fromARGB(255, 41, 64, 42),
-          menuItems: [
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.set_meal_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Fang hinzufügen'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.waves_outlined,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Gewässer'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.emoji_events_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Hitliste'),
-            FanMenuItem(
-                onTap: () {},
-                icon: Icons.person_2_rounded,
-                menuItemIconColor: Color.fromARGB(248, 41, 56, 41),
-                title: 'Profil'),
-          ],
-        ),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 43, 50, 43),
       ),
       body: Stack(
         children: [
@@ -58,17 +30,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: const EdgeInsets.all(16),
               child: Form(
                 child: Column(
                   children: [
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Image.network("https://imgur.com/ClS7mSV.png"),
+                        padding: const EdgeInsets.all(20.0),
+                        child: Image.asset(
+                            'assets/images/hintergründe/hslogo 5.png'),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                    // TODO: Kategorie Elemente einfügen
                   ],
                 ),
               ),
