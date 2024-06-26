@@ -54,14 +54,28 @@ class _AddFangState extends State<AddFang> {
                           snapshot.connectionState == ConnectionState.done) {
                         // FALL: Future ist komplett und hat Daten!
                         List<String> fischarten = snapshot.data!;
-                        return DropdownMenu(
-                          width: 150,
-                          label: const Text('Fischart'),
-                          dropdownMenuEntries:
-                              fischarten.map((String fischArt) {
-                            return DropdownMenuEntry(
-                                value: fischArt, label: fischArt);
-                          }).toList(),
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DropdownMenu(
+                              width: 150,
+                              label: const Text('Fischart'),
+                              dropdownMenuEntries:
+                                  fischarten.map((String fischArt) {
+                                return DropdownMenuEntry(
+                                    value: fischArt, label: fischArt);
+                              }).toList(),
+                            ),
+                            DropdownMenu(
+                              width: 150,
+                              label: const Text('Größe'),
+                              dropdownMenuEntries:
+                                  fischarten.map((String fischArt) {
+                                return DropdownMenuEntry(
+                                    value: fischArt, label: fischArt);
+                              }).toList(),
+                            ),
+                          ],
                         );
                       } else if (snapshot.connectionState !=
                           ConnectionState.done) {

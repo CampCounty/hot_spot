@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "706233446650",
+    "project_id": "hot-spot-angelapp",
+    "storage_bucket": "hot-spot-angelapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706233446650:android:beba29c143141b4d5c9943",
+        "android_client_info": {
+          "package_name": "com.example.hot_spot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8Cbl4gI5WmS6MOtOcRsuKma938Oh99QY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
