@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
-  const HomeScreen({super.key, required this.databaseRepository});
+  const HomeScreen(
+      {super.key,
+      required this.databaseRepository,
+      required AuthRepository authRepository});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

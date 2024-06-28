@@ -5,6 +5,7 @@ import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/sign_up_screen.dart';
+import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 class App extends StatelessWidget {
   final DatabaseRepository databaseRepository;
@@ -17,7 +18,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(
+      home: LoginScreen(
         databaseRepository: databaseRepository,
         authRepository: authRepository,
       ),

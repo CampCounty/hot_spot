@@ -8,15 +8,13 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/data/mock_database.dart';
 import 'package:hot_spot/src/firebase_options.dart';
 
-Future<void> main() async {
-  DatabaseRepository mockDatabase = MockDatabase();
-  AuthRepository authRepository = AuthRepository(FirebaseAuth.instance);
-
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  DatabaseRepository mockDatabase = MockDatabase();
+  AuthRepository authRepository = AuthRepository(FirebaseAuth.instance);
   runApp(App(
     authRepository: authRepository,
     databaseRepository: mockDatabase,

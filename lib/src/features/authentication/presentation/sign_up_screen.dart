@@ -115,9 +115,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomeScreen(
-                                    databaseRepository:
-                                        widget.databaseRepository,
-                                  )));
+                                  databaseRepository: widget.databaseRepository,
+                                  authRepository: widget.authRepository)));
                       // Handle button press here (e.g., form submission)
                     },
                     child: Text('Registrieren'),
