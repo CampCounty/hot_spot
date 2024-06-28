@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
 class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
-  const Profile({super.key, required this.databaseRepository});
+  final AuthRepository authRepository;
+  const Profile(
+      {super.key,
+      required this.databaseRepository,
+      required this.authRepository});
 
   @override
   State<Profile> createState() => _ProfileState();
