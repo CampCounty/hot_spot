@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -102,8 +103,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
-                      await widget.authRepository.loginWithEmailAndPassword(
+                      await widget.authRepository.signUpWithEmailAndPassword(
                           _emailController.text, _pwController.text);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen(
+                                  databaseRepository: widget.databaseRepository,
+                                  authRepository: widget.authRepository)));
+                      // Handle button press here (e.g., form submission)
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(
