@@ -19,4 +19,29 @@ class Profile {
     required this.email,
     required this.geburtstag,
   });
+  Map<String, dynamic> toMap() {
+    return {
+      'userID': userID,
+      'vorname': vorname,
+      'nachname': nachname,
+      'postleitzahl': postleitzahl,
+      'wohnort': wohnort,
+      'bundesland': bundesland,
+      'email': email,
+      'geburtstag': geburtstag,
+    };
+  }
+
+  factory Profile.fromMap(Map<String, dynamic> map) {
+    return Profile(
+      userID: map["userID"],
+      vorname: map["vorname"],
+      nachname: map["nachname"],
+      postleitzahl: map["postleitzahl"],
+      wohnort: map["wohnort"],
+      bundesland: map["bundesland"],
+      email: map["email"],
+      geburtstag: map["geburtstag"],
+    );
+  }
 }

@@ -17,11 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 43, 50, 43),
-      ),
       body: Stack(
         children: [
+          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -32,23 +30,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Image.asset(
-                            'assets/images/hintergründe/hslogo 5.png'),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // TODO: Kategorie Elemente einfügen
-                  ],
-                ),
+
+          // Overlay image
+          Positioned(
+            top: 100,
+            left: 100,
+            child: SizedBox(
+              height: 200,
+              width: 200,
+              child: Image.asset(
+                'assets/images/hintergründe/hslogo 5.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
