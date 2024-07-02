@@ -225,15 +225,8 @@ class MockDatabase implements DatabaseRepository {
   }
 
   @override
-  Future<List<Fang>> getUserFaenge(Profile profile) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    List<Fang> ausgewaehlteFaenge = [];
-    for (Fang fang in faenge) {
-      if (fang.userID == profile.userID) {
-        ausgewaehlteFaenge.add(fang);
-      }
-    }
-    return ausgewaehlteFaenge;
+  Future<List<Fang>> getUserFaenge(profile) {
+    // TODO: implement getUserFaenge
+    throw UnimplementedError();
   }
 }
