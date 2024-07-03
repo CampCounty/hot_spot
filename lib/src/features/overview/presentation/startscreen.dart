@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
@@ -81,11 +80,11 @@ class _StartScreenState extends State<StartScreen> {
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 41, 42, 42)),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
-                  Column(
-                    children: const [
+                  const Column(
+                    children: [
                       Text(
                         "+ teile deine Fänge",
                         style: TextStyle(

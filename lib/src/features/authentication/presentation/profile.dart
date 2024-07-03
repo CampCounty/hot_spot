@@ -32,7 +32,7 @@ class _ProfileState extends State<Profile> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: (const EdgeInsets.all(16)),
               child: Form(
                 child: Column(
                   children: [
@@ -43,7 +43,7 @@ class _ProfileState extends State<Profile> {
                             'assets/images/hintergründe/hslogo 5.png'),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     const Text(
                       "Profil",
                       style: TextStyle(

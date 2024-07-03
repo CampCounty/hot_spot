@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: (const EdgeInsets.all(16)),
               child: Form(
                   child: Column(
                 children: [
@@ -66,13 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           'assets/images/hintergründe/hslogo 5.png'),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   const Text(
                     "Login",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   TextFormField(
                     controller: _emailController,
                     validator: validateEmail,
@@ -80,13 +80,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                               color: Color.fromARGB(255, 49, 117, 52)),
                         ),
                         labelText: "Email",
-                        labelStyle: TextStyle(color: Colors.black)),
+                        labelStyle: const TextStyle(color: Colors.black)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _pwController,
                     validator: validatePw,
@@ -95,12 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Color.fromARGB(255, 49, 117, 52))),
                         labelText: "Passwort",
-                        labelStyle: TextStyle(color: Colors.black)),
+                        labelStyle: const TextStyle(color: Colors.black)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
                       await widget.authRepository.signUpWithEmailAndPassword(
@@ -113,10 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   authRepository: widget.authRepository)));
                       // Handle button press here (e.g., form submission)
                     },
-                    child: Text('Login'),
+                    child: const Text('Login'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Color.fromARGB(
+                      backgroundColor: const Color.fromARGB(
                           255, 49, 117, 52), // Set the button color to green
                     ),
                   ),

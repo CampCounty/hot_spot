@@ -6,7 +6,6 @@ import 'package:hot_spot/src/app.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/data/mock_database.dart';
-import 'package:hot_spot/src/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:hot_spot/src/features/authentication/applikation/validators.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -47,7 +46,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (EdgeInsets.all(16)),
+              padding: (const EdgeInsets.all(16)),
               child: Form(
                   child: Column(
                 children: [
@@ -58,13 +57,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           'assets/images/hintergründe/hslogo 5.png'),
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   const Text(
                     "Registrieren",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   TextFormField(
                     controller: _emailController,
                     validator: validateEmail,
@@ -72,13 +71,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                               color: Color.fromARGB(255, 49, 117, 52)),
                         ),
                         labelText: "Email",
-                        labelStyle: TextStyle(color: Colors.black)),
+                        labelStyle: const TextStyle(color: Colors.black)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _pwController,
                     validator: validatePw,
@@ -87,12 +86,12 @@ class _SignupScreenState extends State<SignupScreen> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Color.fromARGB(255, 49, 117, 52))),
                         labelText: "Passwort",
-                        labelStyle: TextStyle(color: Colors.black)),
+                        labelStyle: const TextStyle(color: Colors.black)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _pwController,
                     validator: validatePw,
@@ -101,12 +100,12 @@ class _SignupScreenState extends State<SignupScreen> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Color.fromARGB(255, 49, 117, 52))),
                         labelText: "Passwort wiederholen",
-                        labelStyle: TextStyle(color: Colors.black)),
+                        labelStyle: const TextStyle(color: Colors.black)),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
                       await widget.authRepository.signUpWithEmailAndPassword(
@@ -122,7 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Text('Registrieren'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Color.fromARGB(
+                      backgroundColor: const Color.fromARGB(
                           255, 49, 117, 52), // Set the button color to green
                     ),
                   )
