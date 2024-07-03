@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddFang1 extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -72,6 +73,39 @@ class _AddFang1State extends State<AddFang1> {
       setState(() {
         _uhrzeitController.text = picked.format(context);
       });
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Standortberechtigung verweigert')),
+          );
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Standortberechtigung dauerhaft verweigert')),
+        );
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        _ortController.text = '${position.latitude}, ${position.longitude}';
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fehler beim Abrufen des Standorts: $e')),
+      );
     }
   }
 
@@ -148,6 +182,10 @@ class _AddFang1State extends State<AddFang1> {
                         labelText: 'Ort',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.gps_fixed),
+                          onPressed: _getCurrentLocation,
                         ),
                       ),
                     ),

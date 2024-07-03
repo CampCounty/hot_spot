@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/presentation/add_fang1.dart';
 
 class AddFang extends StatefulWidget {
   final DatabaseRepository databaseRepository;
