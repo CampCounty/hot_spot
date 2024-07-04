@@ -141,6 +141,40 @@ class _AddFangState extends State<AddFang> {
                                   fontSize: 12.0,
                                 ),
                               ),
+                              const SizedBox(height: 50),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 60,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddFang1(
+                                          databaseRepository:
+                                              widget.databaseRepository,
+                                          authRepository: widget.authRepository,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Color.fromARGB(255, 79, 106, 78),
+                                    foregroundColor:
+                                        Color.fromARGB(255, 223, 242, 224),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Weiter',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
                             ],
                           );
                         } else if (snapshot.connectionState !=
