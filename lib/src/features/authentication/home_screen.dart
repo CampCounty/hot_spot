@@ -7,10 +7,10 @@ class HomeScreen extends StatefulWidget {
   final AuthRepository authRepository;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       drawer: Drawer(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
                   'assets/images/hintergründe/Blancscreen.png'), // Pfad zu Ihrem Hintergrundbild
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Menu',
                       style: TextStyle(
                         color: Colors.white,
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(width: 10),
                         Text(
                           username,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                           ),
@@ -76,47 +76,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.home, color: Colors.white),
-                title: Text('Home', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.home,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Home',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.add, color: Colors.white),
-                title:
-                    Text('Fang melden', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.add,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Fang melden',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.person_2_rounded, color: Colors.white),
-                title: Text('Profil', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.person_2_rounded,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Profil',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                   // Navigate to profile page
                 },
               ),
               ListTile(
-                leading: Icon(Icons.list_outlined, color: Colors.white),
-                title: Text('Hitliste', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.list_outlined,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Hitliste',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                   // Navigate to hit list page
                 },
               ),
               ListTile(
-                leading: Icon(Icons.settings, color: Colors.white),
-                title: Text('Settings', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.settings,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Settings',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                   // Navigate to settings page
                 },
               ),
               ListTile(
-                leading: Icon(Icons.info, color: Colors.white),
-                title: Text('About', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.info,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('About',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
                   // Navigate to about page
@@ -146,7 +157,8 @@ class _HomeScreenState extends State<HomeScreen> {
               top: 10,
               left: 10,
               child: IconButton(
-                icon: Icon(Icons.menu, color: Colors.black),
+                icon: const Icon(Icons.menu,
+                    color: Color.fromARGB(255, 250, 249, 249)),
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
@@ -154,13 +166,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // Overlay image
-            Center(
-              child: SizedBox(
-                height: 200,
-                width: 200,
+            Positioned(
+              top: 20,
+              left: 0,
+              right: 0,
+              child: Center(
                 child: Image.asset(
                   'assets/images/hintergründe/hslogo 5.png',
-                  fit: BoxFit.contain,
+                  height: 100, // Adjust the height as needed
+                  width: 100, // Adjust the width as needed
                 ),
               ),
             ),

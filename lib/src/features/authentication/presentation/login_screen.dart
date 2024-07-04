@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
@@ -7,18 +8,17 @@ class LoginScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
 
-  //Konstruktor
-  const LoginScreen(
-      {super.key,
-      required this.databaseRepository,
-      required this.authRepository});
+  const LoginScreen({
+    Key? key,
+    required this.databaseRepository,
+    required this.authRepository,
+  }) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // state:
   late TextEditingController _emailController;
   late TextEditingController _pwController;
 
@@ -55,77 +55,174 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: (const EdgeInsets.all(16)),
+              padding: const EdgeInsets.all(16),
               child: Form(
-                  child: Column(
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Image.asset(
-                          'assets/images/hintergründe/hslogo 5.png'),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Image.asset(
+                            'assets/images/hintergründe/hslogo 5.png'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Login",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
-                  ),
-                  const SizedBox(height: 80),
-                  TextFormField(
-                    controller: _emailController,
-                    validator: validateEmail,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration: InputDecoration(
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Login",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w800, fontSize: 40.0),
+                    ),
+                    const SizedBox(height: 80),
+                    TextFormField(
+                      controller: _emailController,
+                      validator: validateEmail,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 49, 117, 52)),
+                            color: Color.fromARGB(255, 49, 117, 52),
+                          ),
                         ),
                         labelText: "Email",
-                        labelStyle: const TextStyle(color: Colors.black)),
-                  ),
-                  const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _pwController,
-                    validator: validatePw,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    obscureText: !showPassword,
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 49, 117, 52))),
-                        labelText: "Passwort",
-                        labelStyle: const TextStyle(color: Colors.black)),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await widget.authRepository.signUpWithEmailAndPassword(
-                          _emailController.text, _pwController.text);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen(
-                                  databaseRepository: widget.databaseRepository,
-                                  authRepository: widget.authRepository)));
-                      // Handle button press here (e.g., form submission)
-                    },
-                    child: const Text('Login'),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color.fromARGB(
-                          255, 49, 117, 52), // Set the button color to green
+                        labelStyle: const TextStyle(color: Colors.black),
+                      ),
                     ),
-                  ),
-                ],
-              )),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _pwController,
+                      validator: validatePw,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: !showPassword,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 49, 117, 52),
+                          ),
+                        ),
+                        labelText: "Passwort",
+                        labelStyle: const TextStyle(color: Colors.black),
+                        suffixIcon: IconButton(
+                          icon: Icon(showPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              showPassword = !showPassword;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () {
+                        _showForgotPasswordDialog();
+                      },
+                      child: Text(
+                        "Passwort vergessen?",
+                        style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () async {
+                        String email = _emailController.text.trim();
+                        String password = _pwController.text.trim();
+
+                        try {
+                          await widget.authRepository
+                              .signUpWithEmailAndPassword(email, password);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(
+                                databaseRepository: widget.databaseRepository,
+                                authRepository: widget.authRepository,
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          print('Login fehlgeschlagen: $e');
+                        }
+                      },
+                      child: const Text('Login'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: const Color.fromARGB(255, 49, 117, 52),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String _email = '';
+
+        return AlertDialog(
+          title: Text("Passwort zurücksetzen"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                  "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten."),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "E-Mail",
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  _email = value;
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Abbrechen"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Senden"),
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: _email);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                          "Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet"),
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                          "Fehler beim Senden der Passwort-Zurücksetzungs-E-Mail"),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -154,12 +251,4 @@ String? validatePw(String? input) {
     return 'Passwort muss zwischen 6 und 12 Zeichen lang sein';
   }
   return null;
-}
-
-bool validateRepeatPw(String? firstPw, String? secondPw) {
-  if (firstPw == secondPw) {
-    return true;
-  } else {
-    return false;
-  }
 }

@@ -4,7 +4,10 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang1.dart';
+import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/sign_up_screen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class App extends StatelessWidget {
   final DatabaseRepository databaseRepository;
@@ -17,7 +20,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(
+      home: SignupScreen(
         databaseRepository: databaseRepository,
         authRepository: authRepository,
       ),
