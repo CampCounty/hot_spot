@@ -57,11 +57,19 @@ class _StartScreenState extends State<StartScreen> {
                   const SizedBox(height: 20.0),
 
                   // Welcome text
-                  const Text(
+                  Text(
                     "Willkommen bei Hot Spot",
                     style: TextStyle(
                       fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 212, 178, 124),
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
+                          offset: Offset(2.0, 2.0),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 10.0),
@@ -71,9 +79,9 @@ class _StartScreenState extends State<StartScreen> {
                     children: [
                       const Expanded(child: SizedBox()),
                       Container(
-                        height: 1.0,
-                        width: 150.0,
-                        color: const Color.fromARGB(255, 251, 250, 250),
+                        height: 2.0,
+                        width: 300.0,
+                        color: const Color.fromARGB(255, 95, 114, 95),
                       ),
                       const Expanded(child: SizedBox()),
                     ],
@@ -89,7 +97,53 @@ class _StartScreenState extends State<StartScreen> {
                       color: Color.fromARGB(255, 41, 42, 42),
                     ),
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
+                  SingleChildScrollView(
+                    // Enables scrolling
+                    child: Container(
+                      // Container for image and shadow
+                      decoration: BoxDecoration(
+                        // Apply shadow to container
+                        borderRadius: BorderRadius.circular(25.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 15, 49, 20)
+                                .withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 25,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        // Clip rounded corners
+                        borderRadius: BorderRadius.circular(25.0),
+                        child: SizedBox(
+                          // Define image size
+                          height: 200,
+                          width: 300,
+                          child: Image.asset(
+                            'assets/images/hintergründe/pic5.jpg',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  // Divider
+                  Row(
+                    children: [
+                      const Expanded(child: SizedBox()),
+                      Container(
+                        height: 1.0,
+                        width: 200.0,
+                        color: const Color.fromARGB(255, 95, 114, 95),
+                      ),
+                      const Expanded(child: SizedBox()),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
                   // Feature list
                   const Column(
@@ -102,6 +156,7 @@ class _StartScreenState extends State<StartScreen> {
                           color: Color.fromARGB(255, 41, 42, 42),
                         ),
                       ),
+                      SizedBox(height: 10.0),
                       Text(
                         "+ finde neue Spots",
                         style: TextStyle(
@@ -110,6 +165,7 @@ class _StartScreenState extends State<StartScreen> {
                           color: Color.fromARGB(255, 41, 42, 42),
                         ),
                       ),
+                      SizedBox(height: 10.0),
                       Text(
                         "+ behalte deine Fänge im Blick",
                         style: TextStyle(
@@ -118,6 +174,7 @@ class _StartScreenState extends State<StartScreen> {
                           color: Color.fromARGB(255, 41, 42, 42),
                         ),
                       ),
+                      SizedBox(height: 10.0),
                       Text(
                         "+ verbinde dich mit anderen Anglern",
                         style: TextStyle(
@@ -142,8 +199,8 @@ class _StartScreenState extends State<StartScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 49, 117, 52),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 95, 114, 95),
+                      foregroundColor: const Color.fromARGB(255, 250, 250, 249),
                     ),
                     onPressed: () {
                       // Navigate to LoginScreen
@@ -161,8 +218,8 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 49, 117, 52),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 95, 114, 95),
+                      foregroundColor: const Color.fromARGB(255, 249, 249, 248),
                     ),
                     onPressed: () {
                       Navigator.push(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart'; // Neuer Import
 
 class SignupScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -52,18 +53,36 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Image.asset(
                           'assets/images/hintergründe/hslogo 5.png'),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 10),
                   const Text(
                     "Registrieren",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
                   ),
-                  const SizedBox(height: 80),
+                  // Divider
+                  Row(
+                    children: [
+                      const Expanded(child: SizedBox()),
+                      Container(
+                        height: 2.0,
+                        width: 250.0,
+                        color: const Color.fromARGB(255, 95, 114, 95),
+                      ),
+                      const Expanded(child: SizedBox()),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "erstelle hier dein Konto für Hot Spot",
+                    style: TextStyle(fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: _emailController,
                     validator: validateEmail,
@@ -87,7 +106,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 49, 117, 52))),
+                                color: Color.fromARGB(255, 96, 104, 96))),
                         labelText: "Passwort",
                         labelStyle: const TextStyle(color: Colors.black)),
                   ),
@@ -106,6 +125,26 @@ class _SignupScreenState extends State<SignupScreen> {
                         labelStyle: const TextStyle(color: Colors.black)),
                   ),
                   const SizedBox(height: 24),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(
+                            databaseRepository: widget.databaseRepository,
+                            authRepository: widget.authRepository,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Bereits registriert ?",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 49, 117, 52),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
                       await widget.authRepository.signUpWithEmailAndPassword(
@@ -116,12 +155,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               builder: (context) => HomeScreen(
                                   databaseRepository: widget.databaseRepository,
                                   authRepository: widget.authRepository)));
-                      // Handle button press here (e.g., form submission)
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color.fromARGB(
-                          255, 49, 117, 52), // Set the button color to green
+                      backgroundColor: const Color.fromARGB(255, 95, 114, 95),
+                      foregroundColor: const Color.fromARGB(255, 250, 249, 248),
                     ),
                     child: const Text('Registrieren'),
                   )

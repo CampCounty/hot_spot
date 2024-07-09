@@ -73,6 +73,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.w800, fontSize: 40.0),
                     ),
+                    // Divider
+                    Row(
+                      children: [
+                        const Expanded(child: SizedBox()),
+                        Container(
+                          height: 2.0,
+                          width: 200.0,
+                          color: const Color.fromARGB(255, 95, 114, 95),
+                        ),
+                        const Expanded(
+                          child: SizedBox(),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 80),
                     TextFormField(
                       controller: _emailController,
@@ -129,7 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+
+                    const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () async {
                         String email = _emailController.text.trim();
@@ -153,8 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text('Login'),
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: const Color.fromARGB(255, 49, 117, 52),
+                        backgroundColor: const Color.fromARGB(255, 95, 114, 95),
+                        foregroundColor: Color.fromARGB(255, 251, 251, 250),
                       ),
                     ),
                   ],

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/add_fang1.dart';
 import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -52,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.transparent,
                 ),
                 child: Column(
@@ -65,14 +64,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 24,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         CircleAvatar(
                           backgroundImage: AssetImage(profileImageUrl),
                           radius: 30,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(
                           username,
                           style: const TextStyle(
