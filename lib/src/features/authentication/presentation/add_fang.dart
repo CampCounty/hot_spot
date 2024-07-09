@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hot_spot/src/data/auth_repository.dart';
-import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang1.dart';
+import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/data/auth_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hot_spot/src/features/overview/domain/fang_eintragen.dart';
 
 class AddFang extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
 
   const AddFang({
-    Key? key,
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
-  }) : super(key: key);
+  });
 
   @override
   State<AddFang> createState() => _AddFangState();
@@ -21,6 +23,53 @@ class _AddFangState extends State<AddFang> {
   String? selectedFischart;
   final TextEditingController _groesseController = TextEditingController();
   final TextEditingController _gewichtController = TextEditingController();
+
+  Future<void> _saveFangToFirebase() async {
+    if (selectedFischart == null || _groesseController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Bitte füllen Sie alle erforderlichen Felder aus.')),
+      );
+      return;
+    }
+
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception('Kein Benutzer angemeldet');
+      }
+
+      Map<String, dynamic> fangData = {
+        'fischart': selectedFischart,
+        'groesse': int.parse(_groesseController.text),
+        'gewicht': _gewichtController.text.isNotEmpty
+            ? int.parse(_gewichtController.text)
+            : null,
+        'userId': currentUser.uid,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      await widget.databaseRepository.addFang(fangData as Fang);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fang erfolgreich gespeichert!')),
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddFang1(
+            databaseRepository: widget.databaseRepository,
+            authRepository: widget.authRepository,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fehler beim Speichern: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,29 +195,18 @@ class _AddFangState extends State<AddFang> {
                                 width: double.infinity,
                                 height: 60,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddFang1(
-                                          databaseRepository:
-                                              widget.databaseRepository,
-                                          authRepository: widget.authRepository,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: _saveFangToFirebase,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
-                                        Color.fromARGB(255, 79, 106, 78),
-                                    foregroundColor:
-                                        Color.fromARGB(255, 223, 242, 224),
+                                        const Color.fromARGB(255, 79, 106, 78),
+                                    foregroundColor: const Color.fromARGB(
+                                        255, 223, 242, 224),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
                                   child: const Text(
-                                    'Weiter',
+                                    'Speichern und Weiter',
                                     style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),

@@ -13,6 +13,8 @@ class MockDatabase implements DatabaseRepository {
     Fang(
         userID: 'DW',
         gewaesser: 'Elbe',
+        ort: 'Vockerode',
+        bundesland: 'Sachsen-Anhalt',
         datum: '14.05.2024',
         uhrzeit: '15:00 Uhr',
         fischart: [Fischarten(fischarten: 'Aal')],
@@ -31,7 +33,9 @@ class MockDatabase implements DatabaseRepository {
         bait: [Koeder(name: 'Teig')],
         groesse: 50.0,
         gewicht: 1500.0,
-        release: true),
+        release: true,
+        ort: 'Vockerode',
+        bundesland: 'Sachsen-Anhalt'),
     Fang(
         userID: 'IW',
         gewaesser: 'Elbe',
@@ -42,7 +46,9 @@ class MockDatabase implements DatabaseRepository {
         bait: [Koeder(name: 'Teig')],
         groesse: 50.0,
         gewicht: 1500.0,
-        release: true),
+        release: true,
+        ort: 'Vockerode',
+        bundesland: 'Sachsen-Anhalt'),
   ];
   Profile angemeldetUser = Profile(
     userID: "DW",

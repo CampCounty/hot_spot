@@ -9,10 +9,10 @@ class AddFang1 extends StatefulWidget {
   final AuthRepository authRepository;
 
   const AddFang1({
-    Key? key,
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
-  }) : super(key: key);
+  });
 
   @override
   State<AddFang1> createState() => _AddFang1State();

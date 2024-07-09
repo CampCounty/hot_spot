@@ -6,6 +6,8 @@ import 'koeder.dart';
 class Fang {
   String userID;
   String gewaesser;
+  String ort;
+  String bundesland;
   String datum;
   String uhrzeit;
   List<Fischarten> fischart;
@@ -18,6 +20,8 @@ class Fang {
   Fang({
     required this.userID,
     required this.gewaesser,
+    required this.ort,
+    required this.bundesland,
     required this.datum,
     required this.uhrzeit,
     required this.fischart,

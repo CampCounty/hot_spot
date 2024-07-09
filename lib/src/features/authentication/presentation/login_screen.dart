@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart'; // Updated import path
 
 class LoginScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
 
   const LoginScreen({
-    Key? key,
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
-  }) : super(key: key);
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         _showForgotPasswordDialog();
                       },
-                      child: Text(
+                      child: const Text(
                         "Passwort vergessen?",
                         style: TextStyle(
                           color: Colors.black,
@@ -173,14 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
         String _email = '';
 
         return AlertDialog(
-          title: Text("Passwort zurücksetzen"),
+          title: const Text("Passwort zurücksetzen"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
+              const Text(
                   "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten."),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "E-Mail",
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -192,19 +193,19 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Abbrechen"),
+              child: const Text("Abbrechen"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text("Senden"),
+              child: const Text("Senden"),
               onPressed: () async {
                 try {
                   await FirebaseAuth.instance
                       .sendPasswordResetEmail(email: _email);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text(
                           "Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet"),
                     ),
@@ -212,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.of(context).pop();
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text(
                           "Fehler beim Senden der Passwort-Zurücksetzungs-E-Mail"),
                     ),

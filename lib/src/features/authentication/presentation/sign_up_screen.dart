@@ -118,12 +118,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   authRepository: widget.authRepository)));
                       // Handle button press here (e.g., form submission)
                     },
-                    child: Text('Registrieren'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: const Color.fromARGB(
                           255, 49, 117, 52), // Set the button color to green
                     ),
+                    child: const Text('Registrieren'),
                   )
                 ],
               )),

@@ -14,8 +14,10 @@ void main() async {
   );
   DatabaseRepository mockDatabase = MockDatabase();
   AuthRepository authRepository = AuthRepository(FirebaseAuth.instance);
-  runApp(App(
-    authRepository: authRepository,
-    databaseRepository: mockDatabase,
-  ));
+  runApp(
+    App(
+      authRepository: authRepository,
+      databaseRepository: mockDatabase,
+    ),
+  );
 }

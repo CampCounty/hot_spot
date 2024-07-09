@@ -1,6 +1,11 @@
+// file path: lib/src/features/home/presentation/home_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
+import 'package:hot_spot/src/features/authentication/presentation/add_fang1.dart';
+import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -18,6 +23,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _logout() async {
+    await widget.authRepository.logout();
+    Navigator.of(context).pushReplacementNamed(
+        '/login'); // Assuming you have a named route for login
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors
-                      .transparent, // Hintergrund transparent, damit das Bild sichtbar ist
+                  color: Colors.transparent,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +100,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text('Fang melden',
                     style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddFang(
+                        databaseRepository: widget.databaseRepository,
+                        authRepository: widget.authRepository,
+                      ),
+                    ),
+                  );
                 },
               ),
               ListTile(
@@ -133,6 +151,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Navigate to about page
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.logout,
+                    color: Color.fromARGB(255, 43, 43, 43)),
+                title: const Text('Logout',
+                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(
+                        databaseRepository: widget.databaseRepository,
+                        authRepository: widget.authRepository,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -140,7 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Background image
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -151,8 +185,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
-            // Custom menu button
             Positioned(
               top: 10,
               left: 10,
@@ -164,8 +196,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
-            // Overlay image
             Positioned(
               top: 20,
               left: 0,
@@ -173,8 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/hintergründe/hslogo 5.png',
-                  height: 100, // Adjust the height as needed
-                  width: 100, // Adjust the width as needed
+                  height: 100,
+                  width: 100,
                 ),
               ),
             ),
