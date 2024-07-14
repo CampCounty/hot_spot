@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 class App extends StatelessWidget {

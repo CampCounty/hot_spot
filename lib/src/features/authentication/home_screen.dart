@@ -5,6 +5,7 @@ import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -116,8 +117,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text('Profil',
                     style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
-                  Navigator.pop(context);
-                  // Navigate to profile page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Profile(
+                        databaseRepository: widget.databaseRepository,
+                        authRepository: widget.authRepository,
+                      ),
+                    ),
+                  );
                 },
               ),
               ListTile(
