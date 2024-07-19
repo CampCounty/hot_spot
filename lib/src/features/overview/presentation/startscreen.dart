@@ -60,7 +60,7 @@ class _StartScreenState extends State<StartScreen> {
                   Text(
                     "Willkommen bei Hot Spot",
                     style: TextStyle(
-                      fontSize: 24.0,
+                      fontSize: 32.0,
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 212, 178, 124),
                       shadows: [
@@ -89,12 +89,34 @@ class _StartScreenState extends State<StartScreen> {
                   const SizedBox(height: 10.0),
 
                   // Subtitle
-                  const Text(
-                    "die App von Angler - für Angler",
+                  Text(
+                    "die App",
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 41, 42, 42),
+                      color: Color.fromARGB(255, 212, 178, 124),
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
+                          offset: Offset(2.0, 2.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    "von Angler - für Angler",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 212, 178, 124),
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
+                          offset: Offset(2.0, 2.0),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 20),

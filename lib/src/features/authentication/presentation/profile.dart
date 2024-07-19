@@ -6,16 +6,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 
 class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
   const Profile(
-      {Key? key,
+      {super.key,
       required this.databaseRepository,
-      required this.authRepository})
-      : super(key: key);
+      required this.authRepository});
 
   @override
   State<Profile> createState() => _ProfileState();
