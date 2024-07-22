@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
-import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart'; // Updated import path
 
 class LoginScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -22,6 +21,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _pwController;
+  bool showPassword = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -37,7 +38,45 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  bool showPassword = false;
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Bitte geben Sie eine E-Mail-Adresse ein';
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+    }
+    return null;
+  }
+
+  String? validatePw(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Bitte geben Sie ein Passwort ein';
+    }
+    if (value.length < 6) {
+      return 'Das Passwort muss mindestens 6 Zeichen lang sein';
+    }
+    return null;
+  }
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Passwort zurücksetzen'),
+          content: const Text('Diese Funktion ist noch nicht implementiert.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +112,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.w800, fontSize: 40.0),
                     ),
-                    // Divider
                     Row(
                       children: [
-                        const Expanded(child: SizedBox(),),
+                        const Expanded(
+                          child: SizedBox(),
+                        ),
                         Container(
                           height: 2.0,
                           width: 200.0,
@@ -132,9 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
                     TextButton(
-                      onPressed: () {
-                        _showForgotPasswordDialog();
-                      },
+                      onPressed: _showForgotPasswordDialog,
                       child: const Text(
                         "Passwort vergessen?",
                         style: TextStyle(
@@ -143,30 +181,49 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 8),
                     ElevatedButton(
-                      onPressed: () async {
-                        String email = _emailController.text.trim();
-                        String password = _pwController.text.trim();
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              String email = _emailController.text.trim();
+                              String password = _pwController.text.trim();
 
-                        try {
-                          await widget.authRepository
-                              .signUpWithEmailAndPassword(email, password);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(
-                                databaseRepository: widget.databaseRepository,
-                                authRepository: widget.authRepository,
-                              ),
-                            ),
-                          );
-                        } catch (e) {
-                          print('Login fehlgeschlagen: $e');
-                        }
-                      },
-                      child: const Text('Login'),
+                              try {
+                                await widget.authRepository
+                                    .signUpWithEmailAndPassword(
+                                        email, password);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(
+                                      databaseRepository:
+                                          widget.databaseRepository,
+                                      authRepository: widget.authRepository,
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                print('Login fehlgeschlagen: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Login fehlgeschlagen: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } finally {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            },
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text('Login'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 95, 114, 95),
                         foregroundColor: Color.fromARGB(255, 251, 251, 250),
@@ -181,90 +238,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  void _showForgotPasswordDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String _email = '';
-
-        return AlertDialog(
-          title: const Text("Passwort zurücksetzen"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                  "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten."),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "E-Mail",
-                ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  _email = value;
-                },
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Abbrechen"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Senden"),
-              onPressed: () async {
-                try {
-                  await FirebaseAuth.instance
-                      .sendPasswordResetEmail(email: _email);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          "Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet"),
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          "Fehler beim Senden der Passwort-Zurücksetzungs-E-Mail"),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-String? validateEmail(String? input) {
-  if (input == null || input.isEmpty) {
-    return 'Email darf nicht leer sein';
-  }
-  if (input.length <= 5) {
-    return 'Email muss mehr als 5 Zeichen haben';
-  }
-  if (!input.contains('@')) {
-    return 'Email muss ein "@" Zeichen enthalten';
-  }
-  if (!(input.endsWith('.com') || input.endsWith('.de'))) {
-    return 'Email muss mit ".com" oder ".de" enden';
-  }
-  return null;
-}
-
-String? validatePw(String? input) {
-  if (input == null || input.isEmpty) {
-    return 'Passwort darf nicht leer sein';
-  }
-  if (input.length < 6 || input.length > 12) {
-    return 'Passwort muss zwischen 6 und 12 Zeichen lang sein';
-  }
-  return null;
 }
