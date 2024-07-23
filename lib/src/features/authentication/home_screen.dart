@@ -210,8 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/hintergründe/hslogo 5.png',
-                  height: 100,
-                  width: 100,
+                  height: 150,
+                  width: 150,
                 ),
               ),
             ),

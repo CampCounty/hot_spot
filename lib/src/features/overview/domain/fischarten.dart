@@ -1,3 +1,4 @@
+// ignore: implementation_imports
 import 'package:flutter/src/material/dropdown.dart';
 
 class Fischarten {

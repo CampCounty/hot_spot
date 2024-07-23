@@ -192,16 +192,16 @@ class _AddFangState extends State<AddFang> {
           ),
           SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               child: Form(
                 child: Column(
                   children: [
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(32.0),
+                        padding: const EdgeInsets.all(24.0),
                         child: Image.asset(
                           "assets/images/hintergründe/hslogo 5.png",
-                          width: 200,
+                          width: 100,
                         ),
                       ),
                     ),
@@ -210,10 +210,10 @@ class _AddFangState extends State<AddFang> {
                       "Fang eintragen",
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: 40.0,
+                        fontSize: 30.0,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
                     FutureBuilder<List<String>>(
                       future: widget.databaseRepository.getFischArten(),
                       builder: (context, snapshot) {
@@ -254,7 +254,7 @@ class _AddFangState extends State<AddFang> {
                                 ),
                                 keyboardType: TextInputType.number,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 10),
                               TextFormField(
                                 controller: _gewichtController,
                                 decoration: InputDecoration(

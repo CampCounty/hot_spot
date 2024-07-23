@@ -62,12 +62,13 @@ class _StartScreenState extends State<StartScreen> {
                     style: TextStyle(
                       fontSize: 32.0,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 212, 178, 124),
+                      color: const Color.fromARGB(255, 212, 178, 124),
                       shadows: [
                         Shadow(
                           blurRadius: 10.0,
-                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
-                          offset: Offset(2.0, 2.0),
+                          color: const Color.fromARGB(255, 5, 4, 4)
+                              .withOpacity(0.9),
+                          offset: const Offset(2.0, 2.0),
                         ),
                       ],
                     ),
@@ -94,12 +95,13 @@ class _StartScreenState extends State<StartScreen> {
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 212, 178, 124),
+                      color: const Color.fromARGB(255, 212, 178, 124),
                       shadows: [
                         Shadow(
                           blurRadius: 10.0,
-                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
-                          offset: Offset(2.0, 2.0),
+                          color: const Color.fromARGB(255, 5, 4, 4)
+                              .withOpacity(0.9),
+                          offset: const Offset(2.0, 2.0),
                         ),
                       ],
                     ),
@@ -109,12 +111,13 @@ class _StartScreenState extends State<StartScreen> {
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 212, 178, 124),
+                      color: const Color.fromARGB(255, 212, 178, 124),
                       shadows: [
                         Shadow(
                           blurRadius: 10.0,
-                          color: Color.fromARGB(255, 5, 4, 4).withOpacity(0.9),
-                          offset: Offset(2.0, 2.0),
+                          color: const Color.fromARGB(255, 5, 4, 4)
+                              .withOpacity(0.9),
+                          offset: const Offset(2.0, 2.0),
                         ),
                       ],
                     ),
@@ -129,11 +132,11 @@ class _StartScreenState extends State<StartScreen> {
                         borderRadius: BorderRadius.circular(25.0),
                         boxShadow: [
                           BoxShadow(
-                            color: Color.fromARGB(255, 15, 49, 20)
+                            color: const Color.fromARGB(255, 15, 49, 20)
                                 .withOpacity(0.5),
                             spreadRadius: 3,
                             blurRadius: 25,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -152,7 +155,7 @@ class _StartScreenState extends State<StartScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Divider
                   Row(
                     children: [

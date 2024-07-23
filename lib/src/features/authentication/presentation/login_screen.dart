@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
@@ -197,6 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .signUpWithEmailAndPassword(
                                         email, password);
                                 Navigator.pushReplacement(
+                                  // ignore: use_build_context_synchronously
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => HomeScreen(
@@ -226,7 +226,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           : const Text('Login'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 95, 114, 95),
-                        foregroundColor: Color.fromARGB(255, 251, 251, 250),
+                        foregroundColor:
+                            const Color.fromARGB(255, 251, 251, 250),
                       ),
                     ),
                   ],

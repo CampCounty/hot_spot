@@ -8,9 +8,7 @@ import 'package:hot_spot/src/features/overview/domain/profile.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 
 class FirestoreDatabase implements DatabaseRepository {
-  final FirebaseFirestore _firebaseFirestore;
-
-  FirestoreDatabase(this._firebaseFirestore);
+  FirestoreDatabase(FirebaseFirestore instance);
   List<Profile> profile = [];
 
   List<Fang> faenge = [

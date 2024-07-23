@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:hot_spot/src/features/authentication/home_screen.dart';
-import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
+import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
 
 class App extends StatelessWidget {
   final DatabaseRepository databaseRepository;
@@ -17,7 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(
+      home: Hitliste(
         databaseRepository: databaseRepository,
         authRepository: authRepository,
       ),
