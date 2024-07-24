@@ -153,8 +153,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomeScreen(
-                                  databaseRepository: widget.databaseRepository,
-                                  authRepository: widget.authRepository)));
+                                    databaseRepository:
+                                        widget.databaseRepository,
+                                    authRepository: widget.authRepository,
+                                    username: '',
+                                    profileImageUrl: '',
+                                  )));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 95, 114, 95),

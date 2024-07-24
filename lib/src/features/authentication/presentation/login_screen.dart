@@ -203,6 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       databaseRepository:
                                           widget.databaseRepository,
                                       authRepository: widget.authRepository,
+                                      username: '',
+                                      profileImageUrl: '',
                                     ),
                                   ),
                                 );

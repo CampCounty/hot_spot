@@ -123,6 +123,8 @@ class _ProfileState extends State<Profile> {
                       builder: (context) => HomeScreen(
                         databaseRepository: widget.databaseRepository,
                         authRepository: widget.authRepository,
+                        username: '',
+                        profileImageUrl: '',
                       ),
                     ),
                   );

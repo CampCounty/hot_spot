@@ -184,7 +184,8 @@ class _HitlisteState extends State<Hitliste> {
                                   'Platz',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: Colors.blue, // Farbe der Überschrift
+                                    color: Color.fromARGB(255, 243, 241,
+                                        241), // Farbe der Überschrift
                                   ),
                                 ),
                               ),
@@ -198,7 +199,8 @@ class _HitlisteState extends State<Hitliste> {
                                   'Username',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: Colors.blue, // Farbe der Überschrift
+                                    color: const Color.fromARGB(255, 243, 241,
+                                        241), // Farbe der Überschrift
                                   ),
                                 ),
                               ),
@@ -212,7 +214,8 @@ class _HitlisteState extends State<Hitliste> {
                                   'Größe',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: Colors.blue, // Farbe der Überschrift
+                                    color: const Color.fromARGB(255, 243, 241,
+                                        241), // Farbe der Überschrift
                                   ),
                                 ),
                               ),
@@ -226,7 +229,8 @@ class _HitlisteState extends State<Hitliste> {
                                   'Gewässer',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: Colors.blue, // Farbe der Überschrift
+                                    color: const Color.fromARGB(255, 243, 241,
+                                        241), // Farbe der Überschrift
                                   ),
                                 ),
                               ),

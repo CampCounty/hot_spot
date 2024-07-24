@@ -80,6 +80,8 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => HomeScreen(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
+                      username: '',
+                      profileImageUrl: '',
                     ),
                   ),
                 );

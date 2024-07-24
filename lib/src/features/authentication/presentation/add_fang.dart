@@ -164,6 +164,8 @@ class _AddFangState extends State<AddFang> {
           builder: (context) => HomeScreen(
             databaseRepository: widget.databaseRepository,
             authRepository: widget.authRepository,
+            profileImageUrl: '',
+            username: '',
           ),
         ),
         (Route<dynamic> route) => false,

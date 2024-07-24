@@ -15,6 +15,8 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.databaseRepository,
     required this.authRepository,
+    required String username,
+    required String profileImageUrl,
   });
 
   @override

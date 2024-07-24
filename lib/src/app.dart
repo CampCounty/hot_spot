@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:hot_spot/src/features/authentication/presentation/add_gewaesser.dart';
 import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
 
 class App extends StatelessWidget {
@@ -16,9 +17,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Hitliste(
+      home: AddGewaesser(
         databaseRepository: databaseRepository,
         authRepository: authRepository,
+        username: '',
+        profileImageUrl: '',
       ),
     );
   }
