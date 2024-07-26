@@ -2,186 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:hot_spot/src/features/authentication/home_screen.dart';
-import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
-import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
-import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
-
-class CustomDrawer extends StatelessWidget {
-  final String username;
-  final String profileImageUrl;
-  final DatabaseRepository databaseRepository;
-  final AuthRepository authRepository;
-
-  const CustomDrawer({
-    super.key,
-    required this.username,
-    required this.profileImageUrl,
-    required this.databaseRepository,
-    required this.authRepository,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Menu',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(profileImageUrl),
-                        radius: 30,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        username,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Home',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(
-                      databaseRepository: databaseRepository,
-                      authRepository: authRepository,
-                      username: '',
-                      profileImageUrl: '',
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.add, color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Fang melden',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddFang(
-                      databaseRepository: databaseRepository,
-                      authRepository: authRepository,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_2_rounded,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Profil',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Profile(
-                      databaseRepository: databaseRepository,
-                      authRepository: authRepository,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.list_outlined,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Hitliste',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Hitliste(
-                      databaseRepository: databaseRepository,
-                      authRepository: authRepository,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Settings',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to settings page
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('About',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to about page
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout,
-                  color: Color.fromARGB(255, 43, 43, 43)),
-              title: const Text('Logout',
-                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(
-                      databaseRepository: databaseRepository,
-                      authRepository: authRepository,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'package:hot_spot/src/features/overview/domain/menue.dart';
 
 class AddGewaesser extends StatefulWidget {
   const AddGewaesser(
@@ -205,7 +26,7 @@ class _AddGewaesserState extends State<AddGewaesser> {
   String? selectedBundesland;
   String? selectedLandkreis;
   String? gewaesserName;
-  String? ort; // Neues Feld hinzufügen
+  String? ort;
 
   List<String> bundeslaender = [];
   List<String> landkreise = [];
@@ -256,16 +77,18 @@ class _AddGewaesserState extends State<AddGewaesser> {
             .doc(gewaesserName)
             .set({
           'name': gewaesserName,
-          'ort': ort, // Ort hinzufügen
-          // Add more fields if needed
+          'ort': ort,
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gewässer erfolgreich hinzugefügt')),
+          const SnackBar(
+            content: Text(
+                'Gewässer erfolgreich hinzugefügt,vielen Dank für deine Mitarbeit'),
+          ),
         );
         setState(() {
           selectedLandkreis = null;
           gewaesserName = null;
-          ort = null; // Ort zurücksetzen
+          ort = null;
         });
       } catch (e) {
         print('Fehler beim Hinzufügen des Gewässers: $e');
@@ -285,149 +108,165 @@ class _AddGewaesserState extends State<AddGewaesser> {
         databaseRepository: widget.databaseRepository,
         authRepository: widget.authRepository,
       ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/hintergründe/Blancscreen.png',
+      body: Builder(
+        builder: (BuildContext context) {
+          return Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/images/hintergründe/Blancscreen.png',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                fit: BoxFit.cover,
               ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset(
-                            'assets/images/hintergründe/hslogo 5.png',
-                            fit: BoxFit.contain,
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 40),
+                        IconButton(
+                          icon: Icon(Icons.menu),
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SizedBox(
+                              width: 150,
+                              height: 150,
+                              child: Image.asset(
+                                'assets/images/hintergründe/hslogo 5.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Text(
+                            "Neues Gewässer hinzufügen",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 25.0),
+                          ),
+                        ),
+                        const SizedBox(height: 100),
+                        DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: 'Bundesland',
+                            border: OutlineInputBorder(),
+                          ),
+                          value: selectedBundesland,
+                          items: bundeslaender.map((String bundesland) {
+                            return DropdownMenuItem<String>(
+                              value: bundesland,
+                              child: Text(bundesland),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedBundesland = newValue;
+                              selectedLandkreis = null;
+                              if (newValue != null) {
+                                _loadLandkreise(newValue);
+                              }
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte wählen Sie ein Bundesland aus';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: 'Landkreis',
+                            border: OutlineInputBorder(),
+                          ),
+                          value: selectedLandkreis,
+                          items: landkreise.map((String landkreis) {
+                            return DropdownMenuItem<String>(
+                              value: landkreis,
+                              child: Text(landkreis),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedLandkreis = newValue;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte wähle einen Landkreis aus';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Gewässername',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              gewaesserName = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte gib einen Gewässernamen ein';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Ort',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              ort = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte gib einen Ort ein';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: _addGewaesser,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.green,
+                            ),
+                            child: const Text('Gewässer speichern'),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Neues Gewässer hinzufügen",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w800, fontSize: 40.0),
-                    ),
-                    const SizedBox(height: 100),
-                    DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Bundesland',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: selectedBundesland,
-                      items: bundeslaender.map((String bundesland) {
-                        return DropdownMenuItem<String>(
-                          value: bundesland,
-                          child: Text(bundesland),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedBundesland = newValue;
-                          selectedLandkreis = null;
-                          if (newValue != null) {
-                            _loadLandkreise(newValue);
-                          }
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte wählen Sie ein Bundesland aus';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Landkreis',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: selectedLandkreis,
-                      items: landkreise.map((String landkreis) {
-                        return DropdownMenuItem<String>(
-                          value: landkreis,
-                          child: Text(landkreis),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedLandkreis = newValue;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte wählen Sie einen Landkreis aus';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Gewässername',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          gewaesserName = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte geben Sie einen Gewässernamen ein';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Ort', // Neues Feld hinzufügen
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          ort = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte geben Sie einen Ort ein'; // Validierung hinzufügen
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _addGewaesser,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.green,
-                      ),
-                      child: const Text('Gewässer hinzufügen'),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

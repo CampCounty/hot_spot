@@ -9,7 +9,9 @@ class Hitliste extends StatefulWidget {
   const Hitliste(
       {super.key,
       required this.databaseRepository,
-      required this.authRepository});
+      required this.authRepository,
+      required String username,
+      required String profileImageUrl});
 
   @override
   State<Hitliste> createState() => _HitlisteState();

@@ -235,4 +235,16 @@ class MockDatabase implements DatabaseRepository {
     // TODO: implement getUserFaenge
     throw UnimplementedError();
   }
+
+  @override
+  getAngelmethoden() {
+    // TODO: implement getAngelmethoden
+    throw UnimplementedError();
+  }
+
+  @override
+  getNaturkoeder() {
+    // TODO: implement getNaturkoeder
+    throw UnimplementedError();
+  }
 }

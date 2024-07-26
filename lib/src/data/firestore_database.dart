@@ -205,6 +205,7 @@ class FirestoreDatabase implements DatabaseRepository {
     'Zander',
     'Zeilenkarpfen',
     'Zope',
+    'Zwergwels',
     ''
   ];
 
@@ -235,6 +236,18 @@ class FirestoreDatabase implements DatabaseRepository {
   @override
   Future<List<Fang>> getUserFaenge(profile) {
     // TODO: implement getUserFaenge
+    throw UnimplementedError();
+  }
+
+  @override
+  getAngelmethoden() {
+    // TODO: implement getAngelmethoden
+    throw UnimplementedError();
+  }
+
+  @override
+  getNaturkoeder() {
+    // TODO: implement getNaturkoeder
     throw UnimplementedError();
   }
 }

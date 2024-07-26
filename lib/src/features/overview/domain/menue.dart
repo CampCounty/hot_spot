@@ -6,6 +6,7 @@ import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart'
 import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
 import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
+import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 class CustomDrawer extends StatelessWidget {
   final String username;
@@ -99,6 +100,8 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => AddFang(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
+                      username: '',
+                      profileImageUrl: '',
                     ),
                   ),
                 );
@@ -133,6 +136,8 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => Hitliste(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
+                      username: '',
+                      profileImageUrl: '',
                     ),
                   ),
                 );
@@ -167,9 +172,11 @@ class CustomDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(
+                    builder: (context) => StartScreen(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
+                      username: '',
+                      profileImageUrl: '',
                     ),
                   ),
                 );

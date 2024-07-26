@@ -108,6 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => AddFang(
                         databaseRepository: widget.databaseRepository,
                         authRepository: widget.authRepository,
+                        username: '',
+                        profileImageUrl: '',
                       ),
                     ),
                   );

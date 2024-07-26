@@ -5,4 +5,8 @@ abstract class DatabaseRepository {
   Future<void> addFang(Fang newFang);
   Future<List<Fang>> getFaenge();
   Future<List<String>> getFischArten();
+
+  getAngelmethoden() {}
+
+  getNaturkoeder() {}
 }

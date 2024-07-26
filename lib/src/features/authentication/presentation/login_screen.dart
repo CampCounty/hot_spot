@@ -193,8 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               try {
                                 await widget.authRepository
-                                    .signUpWithEmailAndPassword(
-                                        email, password);
+                                    .loginWithEmailAndPassword(email, password);
                                 Navigator.pushReplacement(
                                   // ignore: use_build_context_synchronously
                                   context,

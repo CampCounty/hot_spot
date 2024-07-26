@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hot_spot/src/features/authentication/home_screen.dart';
+import 'package:hot_spot/src/data/fang_data.dart';
+import 'package:hot_spot/src/features/authentication/presentation/add_fang2.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -15,6 +14,8 @@ class AddFang extends StatefulWidget {
     super.key,
     required this.databaseRepository,
     required this.authRepository,
+    required String username,
+    required String profileImageUrl,
   });
 
   @override
@@ -25,7 +26,6 @@ class _AddFangState extends State<AddFang> {
   String? selectedFischart;
   final TextEditingController _groesseController = TextEditingController();
   final TextEditingController _gewichtController = TextEditingController();
-
   final TextEditingController _datumController = TextEditingController();
   final TextEditingController _uhrzeitController = TextEditingController();
   final TextEditingController _ortController = TextEditingController();
@@ -51,6 +51,8 @@ class _AddFangState extends State<AddFang> {
     'Thüringen',
   ];
 
+  static const TextStyle blackLabelStyle = TextStyle(color: Colors.black);
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -64,9 +66,7 @@ class _AddFangState extends State<AddFang> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Datumauswahl abgebrochen'),
-        ),
+        SnackBar(content: Text('Datumauswahl abgebrochen')),
       );
     }
   }
@@ -116,7 +116,7 @@ class _AddFangState extends State<AddFang> {
     }
   }
 
-  Future<void> _saveFangToFirebase() async {
+  void _navigateToNextScreen() {
     if (selectedFischart == null ||
         _groesseController.text.isEmpty ||
         _datumController.text.isEmpty ||
@@ -131,50 +131,28 @@ class _AddFangState extends State<AddFang> {
       return;
     }
 
-    try {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        throw Exception('Kein Benutzer angemeldet');
-      }
+    FangData fangData = FangData(
+      fischart: selectedFischart,
+      groesse: int.tryParse(_groesseController.text),
+      gewicht: int.tryParse(_gewichtController.text),
+      datum: _datumController.text,
+      uhrzeit: _uhrzeitController.text,
+      ort: _ortController.text,
+      bundesland: _selectedBundesland,
+      gewaesser: _gewaesserController.text,
+    );
 
-      DocumentReference userDoc =
-          FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
-
-      await userDoc.collection('faenge').add({
-        'fischart': selectedFischart,
-        'groesse': int.parse(_groesseController.text),
-        'gewicht': _gewichtController.text.isNotEmpty
-            ? int.parse(_gewichtController.text)
-            : null,
-        'datum': _datumController.text,
-        'uhrzeit': _uhrzeitController.text,
-        'ort': _ortController.text,
-        'bundesland': _selectedBundesland,
-        'gewaesser': _gewaesserController.text,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fang erfolgreich gespeichert!')),
-      );
-
-      // Navigieren zum HomeScreen
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            databaseRepository: widget.databaseRepository,
-            authRepository: widget.authRepository,
-            profileImageUrl: '',
-            username: '',
-          ),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddFang2(
+          databaseRepository: widget.databaseRepository,
+          authRepository: widget.authRepository,
+          username: '',
+          profileImageUrl: '',
+          fangData: fangData,
         ),
-        (Route<dynamic> route) => false,
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fehler beim Speichern: $e')),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -185,9 +163,7 @@ class _AddFangState extends State<AddFang> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/hintergründe/Blancscreen.png',
-                ),
+                image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -198,6 +174,7 @@ class _AddFangState extends State<AddFang> {
               child: Form(
                 child: Column(
                   children: [
+                    SizedBox(height: 50),
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
@@ -213,6 +190,7 @@ class _AddFangState extends State<AddFang> {
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 30.0,
+                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -229,6 +207,7 @@ class _AddFangState extends State<AddFang> {
                                 value: selectedFischart,
                                 decoration: InputDecoration(
                                   labelText: 'Fischart',
+                                  labelStyle: blackLabelStyle,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -236,7 +215,8 @@ class _AddFangState extends State<AddFang> {
                                 items: fischarten.map((String fischArt) {
                                   return DropdownMenuItem<String>(
                                     value: fischArt,
-                                    child: Text(fischArt),
+                                    child:
+                                        Text(fischArt, style: blackLabelStyle),
                                   );
                                 }).toList(),
                                 onChanged: (String? newValue) {
@@ -244,64 +224,94 @@ class _AddFangState extends State<AddFang> {
                                     selectedFischart = newValue;
                                   });
                                 },
+                                style: blackLabelStyle,
                               ),
                               const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _groesseController,
-                                decoration: InputDecoration(
-                                  labelText: 'Größe (in cm)',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _groesseController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Größe (cm)',
+                                        labelStyle: blackLabelStyle,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                      style: blackLabelStyle,
+                                    ),
                                   ),
-                                ),
-                                keyboardType: TextInputType.number,
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _gewichtController,
-                                decoration: InputDecoration(
-                                  labelText: 'Gewicht (in g)',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _gewichtController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Gewicht (g)',
+                                        labelStyle: blackLabelStyle,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                      style: blackLabelStyle,
+                                    ),
                                   ),
-                                ),
-                                keyboardType: TextInputType.number,
+                                ],
                               ),
                               const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _datumController,
-                                decoration: InputDecoration(
-                                  labelText: 'Datum',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _datumController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Datum',
+                                        labelStyle: blackLabelStyle,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        await _selectDate(context);
+                                      },
+                                      style: blackLabelStyle,
+                                    ),
                                   ),
-                                ),
-                                onTap: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  await _selectDate(context);
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _uhrzeitController,
-                                decoration: InputDecoration(
-                                  labelText: 'Uhrzeit',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _uhrzeitController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Uhrzeit',
+                                        labelStyle: blackLabelStyle,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        await _selectTime(context);
+                                      },
+                                      style: blackLabelStyle,
+                                    ),
                                   ),
-                                ),
-                                onTap: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  await _selectTime(context);
-                                },
+                                ],
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
                                 controller: _ortController,
                                 decoration: InputDecoration(
                                   labelText: 'Ort',
+                                  labelStyle: blackLabelStyle,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -310,12 +320,14 @@ class _AddFangState extends State<AddFang> {
                                     onPressed: _getCurrentLocation,
                                   ),
                                 ),
+                                style: blackLabelStyle,
                               ),
                               const SizedBox(height: 16),
                               DropdownButtonFormField<String>(
                                 value: _selectedBundesland,
                                 decoration: InputDecoration(
                                   labelText: 'Bundesland',
+                                  labelStyle: blackLabelStyle,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -323,7 +335,8 @@ class _AddFangState extends State<AddFang> {
                                 items: _bundeslaender.map((String bundesland) {
                                   return DropdownMenuItem<String>(
                                     value: bundesland,
-                                    child: Text(bundesland),
+                                    child: Text(bundesland,
+                                        style: blackLabelStyle),
                                   );
                                 }).toList(),
                                 onChanged: (String? newValue) {
@@ -331,23 +344,26 @@ class _AddFangState extends State<AddFang> {
                                     _selectedBundesland = newValue;
                                   });
                                 },
+                                style: blackLabelStyle,
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
                                 controller: _gewaesserController,
                                 decoration: InputDecoration(
                                   labelText: 'Gewässername',
+                                  labelStyle: blackLabelStyle,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
+                                style: blackLabelStyle,
                               ),
                               const SizedBox(height: 24),
                               SizedBox(
                                 width: double.infinity,
                                 height: 60,
                                 child: ElevatedButton(
-                                  onPressed: _saveFangToFirebase,
+                                  onPressed: _navigateToNextScreen,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
                                         const Color.fromARGB(255, 79, 106, 78),
@@ -357,11 +373,19 @@ class _AddFangState extends State<AddFang> {
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Speichern',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'weiter',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.arrow_forward),
+                                    ],
                                   ),
                                 ),
                               ),
