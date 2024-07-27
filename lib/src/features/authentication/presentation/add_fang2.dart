@@ -15,13 +15,13 @@ class AddFang2 extends StatefulWidget {
   final FangData fangData;
 
   const AddFang2({
-    Key? key,
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
     required String username,
     required String profileImageUrl,
     required this.fangData,
-  }) : super(key: key);
+  });
 
   @override
   State<AddFang2> createState() => _AddFang2State();
@@ -38,12 +38,13 @@ class _AddFang2State extends State<AddFang2> {
   final picker = ImagePicker();
   String? uploadedImageUrl;
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<List<String>> getAngelmethoden() async {
     try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('Angelmethoden').get();
-      List<String> methoden = querySnapshot.docs.map((doc) => doc.id).toList();
-      return methoden;
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('angelmethoden').get();
+      return List<String>.from(doc['methoden'] as List);
     } catch (e) {
       print("Fehler beim Laden der Angelmethoden: $e");
       return [];
@@ -52,10 +53,17 @@ class _AddFang2State extends State<AddFang2> {
 
   Future<List<String>> getKoeder(String koederType) async {
     try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection(koederType).get();
-      List<String> koeder = querySnapshot.docs.map((doc) => doc.id).toList();
-      return koeder;
+      DocumentSnapshot doc = await _firestore
+          .collection('metadata')
+          .doc(koederType.toLowerCase())
+          .get();
+      if (doc.exists) {
+        var data = doc.data() as Map<String, dynamic>;
+        if (data.containsKey('liste')) {
+          return List<String>.from(data['liste'] as List);
+        }
+      }
+      throw Exception('Keine Köder-Liste gefunden');
     } catch (e) {
       print("Fehler beim Laden der Köder: $e");
       return [];
@@ -118,11 +126,9 @@ class _AddFang2State extends State<AddFang2> {
         }
       }
 
-      DocumentReference userDoc =
-          FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
-
       Map<String, dynamic> fangData = widget.fangData.toMap();
       fangData.addAll({
+        'userId': currentUser.uid,
         'angelmethode': selectedAngelmethode,
         'koederTyp': isNaturkoeder ? 'Naturköder' : 'Kunstköder',
         'koeder': selectedKoeder,
@@ -130,7 +136,7 @@ class _AddFang2State extends State<AddFang2> {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      await userDoc.collection('faenge').add(fangData);
+      await FirebaseFirestore.instance.collection('faenge').add(fangData);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Fang erfolgreich gespeichert!')),
@@ -272,7 +278,7 @@ class _AddFang2State extends State<AddFang2> {
                   if (isNaturkoeder || isKunstkoeder)
                     FutureBuilder<List<String>>(
                       future: getKoeder(
-                          isNaturkoeder ? 'Naturköder' : 'Kunstköder'),
+                          isNaturkoeder ? 'naturkoeder' : 'kunstkoeder'),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {

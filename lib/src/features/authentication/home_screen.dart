@@ -1,10 +1,7 @@
-// file path: lib/src/features/home/presentation/home_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,16 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _logout() async {
     await widget.authRepository.logout();
-    Navigator.of(context).pushReplacementNamed(
-        '/login'); // Assuming you have a named route for login
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    String username =
-        "Daniel"; // Ersetzen Sie dies durch den tatsächlichen Benutzernamen
+    String username = "Daniel"; // Replace with actual username
     String profileImageUrl =
-        'assets/images/hintergründe/hslogo 5.png'; // Ersetzen Sie dies durch die tatsächliche URL des Profilbildes
+        'assets/images/hintergründe/hslogo 5.png'; // Replace with actual profile image URL
 
     return Scaffold(
       key: _scaffoldKey,
@@ -45,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(
-                  'assets/images/hintergründe/Blancscreen.png'), // Pfad zu Ihrem Hintergrundbild
+              image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -133,23 +127,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.list_outlined,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Hitliste',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Navigate to hit list page
-                },
-              ),
-              ListTile(
                 leading: const Icon(Icons.settings,
                     color: Color.fromARGB(255, 43, 43, 43)),
                 title: const Text('Settings',
                     style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to settings page
                 },
               ),
               ListTile(
@@ -159,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to about page
                 },
               ),
               ListTile(
@@ -167,17 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Color.fromARGB(255, 43, 43, 43)),
                 title: const Text('Logout',
                     style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                      ),
-                    ),
-                  );
-                },
+                onTap: _logout,
               ),
             ],
           ),
@@ -189,9 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/hintergründe/Blancscreen.png',
-                  ),
+                  image:
+                      AssetImage('assets/images/hintergründe/Blancscreen.png'),
                   fit: BoxFit.cover,
                 ),
               ),

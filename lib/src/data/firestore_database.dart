@@ -1,253 +1,229 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hot_spot/src/features/overview/domain/angelarten.dart';
-import 'package:hot_spot/src/features/overview/domain/fang_eintragen.dart';
-import 'package:hot_spot/src/features/overview/domain/fischarten.dart';
-import 'package:hot_spot/src/features/overview/domain/koeder.dart';
-
-import 'package:hot_spot/src/features/overview/domain/profile.dart';
+import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
+import 'package:logger/logger.dart'; // Importieren Sie ein Logging-Framework
 
 class FirestoreDatabase implements DatabaseRepository {
-  FirestoreDatabase(FirebaseFirestore instance);
-  List<Profile> profile = [];
+  final FirebaseFirestore _firestore;
+  final Logger _logger = Logger(); // Initialisieren Sie den Logger
 
-  List<Fang> faenge = [
-    Fang(
-        userID: 'DW',
-        gewaesser: 'Elbe',
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Aal')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true),
-    Fang(
-        userID: 'Kai',
-        gewaesser: 'Elbe',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Aal')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true,
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt'),
-    Fang(
-        userID: 'IW',
-        gewaesser: 'Elbe',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Karpfen')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true,
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt'),
-  ];
-  Profile angemeldetUser = Profile(
-    userID: "DW",
-    vorname: "Daniel",
-    nachname: "Werner",
-    postleitzahl: 06792,
-    wohnort: "Sandersdorf",
-    bundesland: '',
-    email: "xy.dd@.de",
-    geburtstag: "13.04.1972",
-  );
-
-  List<String> naturkoeder = [
-    "Teig",
-    "Mais",
-    "Bienenmade",
-    "Kaese",
-    "Boilie",
-    "Pellet",
-    "Dentrobena",
-    "Made",
-    "Tauwurm",
-    "Fischfetzen",
-    "Koederfisch",
-    "Sonstiges"
-  ];
-  List<String> kunstkoeder = [
-    "Blinker",
-    "Spinner",
-    "Wobbler",
-    "Gummifisch",
-    "Twister",
-    "Jerkbait",
-    "Popper",
-    "Spoon",
-    "Fliege",
-    "Sonstiges",
-  ];
-  List<String> methoden = [
-    "grundangeln",
-    "posenangeln",
-    "feedern",
-    "spinnangeln",
-    "fliegenfischen",
-    "schleppangeln",
-    "stippangeln",
-    "dropshot",
-    "brandungsangeln",
-    "pilken",
-    "hochseeangeln",
-    "spirolinoangeln",
-    "sonstiges",
-  ];
-
-  List<String> bundeslaender = [
-    'Baden-Württemberg',
-    'Bayern',
-    'Berlin',
-    'Brandenburg',
-    'Bremen',
-    'Hamburg',
-    'Hessen',
-    'Mecklenburg-Vorpommern',
-    'Niedersachsen',
-    'Nordrhein-Westfalen',
-    'Rheinlamd-Pfalz',
-    'Saarland',
-    'Sachsen',
-    'Sachsen-Anhalt',
-    'Schleswig-Holstein',
-    'Thüringen',
-  ];
-
-  List<String> fischArten = [
-    'Aal',
-    'Aland',
-    'Äsche',
-    'Bachforelle',
-    'Bachsaibling',
-    'Barbe',
-    'Barsch',
-    'Blauleng',
-    'Brasse',
-    'Conger',
-    'Döbel',
-    'Dornhai',
-    'Dorsch',
-    'Elritze',
-    'Flunder',
-    'Giebel',
-    'Goldforelle',
-    'Graskarpfen',
-    'Grundel',
-    'Gründling',
-    'Güster',
-    'Hasel',
-    'Hecht',
-    'Heilbutt',
-    'Hering',
-    'Hornhecht',
-    'Huchen',
-    'Karausche',
-    'Karpfen',
-    'Katzenwels / Zwergwels',
-    'Kaulbarsch',
-    'Kliesche',
-    'Knurrhahn',
-    'Köhler',
-    'Lachs',
-    'Lachsforelle',
-    'Laube / Ukelei',
-    'Lederkarpfen',
-    'Leng',
-    'Lumb',
-    'Makrele',
-    'Maräne',
-    'Marmorkarpfen',
-    'Meeräsche',
-    'Meerforelle',
-    'Moderlieschen',
-    'Nase',
-    'Pollack',
-    'Quappe',
-    'Rapfen',
-    'Regenbogenforelle',
-    'Rotauge',
-    'Rotbarsch',
-    'Rotfeder',
-    'Saibling/Seesaibling',
-    'Schellfisch',
-    'Schleie',
-    'Schmerlen',
-    'Scholle',
-    'Schuppenkarpfen',
-    'Seeforelle',
-    'Seehecht',
-    'Seerüssling',
-    'Seeteufel',
-    'Seezunge',
-    'Silberkarpfen',
-    'Spiegelkarpfen',
-    'Steinbeisser',
-    'Steinbutt',
-    'Stint',
-    'Stör',
-    'Wels',
-    'Wildkarpfen',
-    'Wittling',
-    'Wolfsbarsch',
-    'Wolgazander',
-    'Zährte',
-    'Zander',
-    'Zeilenkarpfen',
-    'Zope',
-    'Zwergwels',
-    ''
-  ];
-
-  Future<List<Fang>> getFang() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return faenge;
-  }
+  FirestoreDatabase(this._firestore);
 
   @override
-  Future<List<Fang>> getFaenge() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return faenge;
+  Future<List<FangData>> getFaenge() async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .orderBy('datum', descending: true)
+          .get();
+
+      List<FangData> faenge = querySnapshot.docs.map((doc) {
+        return FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      return faenge;
+    } catch (e) {
+      _logger.e('Error getting faenge: $e');
+      return [];
+    }
   }
 
   @override
   Future<List<String>> getFischArten() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return fischArten;
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('fischarten').get();
+      return List<String>.from(doc['arten'] as List);
+    } catch (e) {
+      _logger.e('Error getting fischarten: $e');
+      return [];
+    }
   }
 
   @override
-  Future<void> addFang(Fang newFang) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    faenge.add(newFang);
+  Future<void> addFang(FangData newFang) async {
+    try {
+      await _firestore.collection('faenge').add(newFang.toMap());
+    } catch (e) {
+      _logger.e('Error adding fang: $e');
+      rethrow;
+    }
   }
 
   @override
-  Future<List<Fang>> getUserFaenge(profile) {
-    // TODO: implement getUserFaenge
-    throw UnimplementedError();
+  Future<List<FangData>> getUserFaenge(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('userID', isEqualTo: userId)
+          .orderBy('datum', descending: true)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      _logger.e('Error getting user faenge: $e');
+      return [];
+    }
   }
 
   @override
-  getAngelmethoden() {
-    // TODO: implement getAngelmethoden
-    throw UnimplementedError();
+  Future<List<String>> getAngelmethoden() async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('angelmethoden').get();
+      return List<String>.from(doc['methoden'] as List);
+    } catch (e) {
+      _logger.e('Error getting angelmethoden: $e');
+      return [];
+    }
   }
 
   @override
-  getNaturkoeder() {
-    // TODO: implement getNaturkoeder
-    throw UnimplementedError();
+  Future<List<String>> getNaturkoeder() async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('naturkoeder').get();
+      return List<String>.from(doc['koeder'] as List);
+    } catch (e) {
+      _logger.e('Error getting naturkoeder: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<int> countUserFaenge(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('userID', isEqualTo: userId)
+          .get();
+      return querySnapshot.size;
+    } catch (e) {
+      _logger.e('Error counting user faenge: $e');
+      return 0;
+    }
+  }
+
+  @override
+  Future<void> deleteFang(String fangId) async {
+    try {
+      await _firestore.collection('faenge').doc(fangId).delete();
+    } catch (e) {
+      _logger.e('Error deleting fang: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<double> getAverageFangGroesse(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('userID', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.size == 0) return 0.0;
+
+      double totalGroesse = 0;
+      for (var doc in querySnapshot.docs) {
+        totalGroesse += (doc.data() as Map<String, dynamic>)['groesse'] ?? 0;
+      }
+      return totalGroesse / querySnapshot.size;
+    } catch (e) {
+      _logger.e('Error getting average fang groesse: $e');
+      return 0.0;
+    }
+  }
+
+  @override
+  Future<List<FangData>> getFaengeByFischart(String fischart) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('fischart', isEqualTo: fischart)
+          .orderBy('datum', descending: true)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      _logger.e('Error getting faenge by fischart: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<FangData>> getFaengeByGewaesser(String gewaesser) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('gewaesser', isEqualTo: gewaesser)
+          .orderBy('datum', descending: true)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      _logger.e('Error getting faenge by gewaesser: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<FangData>> getTopFaenge({int limit = 10}) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .orderBy('groesse', descending: true)
+          .limit(limit)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      _logger.e('Error getting top faenge: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(userId).get();
+      return doc.data() as Map<String, dynamic>?;
+    } catch (e) {
+      _logger.e('Error getting user profile: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<void> saveUserProfile(
+      String userId, Map<String, dynamic> profileData) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .set(profileData, SetOptions(merge: true));
+    } catch (e) {
+      _logger.e('Error saving user profile: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateFang(String fangId, Map<String, dynamic> newData) async {
+    try {
+      await _firestore.collection('faenge').doc(fangId).update(newData);
+    } catch (e) {
+      _logger.e('Error updating fang: $e');
+      rethrow;
+    }
   }
 }

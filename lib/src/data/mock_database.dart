@@ -1,250 +1,107 @@
-import 'package:hot_spot/src/features/overview/domain/angelarten.dart';
-import 'package:hot_spot/src/features/overview/domain/fang_eintragen.dart';
-import 'package:hot_spot/src/features/overview/domain/fischarten.dart';
-import 'package:hot_spot/src/features/overview/domain/koeder.dart';
+// Modellklasse für Fangdaten
+class FangData {
+  final String id;
+  final String userId;
+  final String fischart;
+  final int groesse;
+  final int gewicht;
+  final String datum;
+  final String uhrzeit;
+  final String ort;
+  final String bundesland;
+  final String gewaesser;
 
-import 'package:hot_spot/src/features/overview/domain/profile.dart';
-import 'package:hot_spot/src/data/database_repository.dart';
+  FangData({
+    required this.id,
+    required this.userId,
+    required this.fischart,
+    required this.groesse,
+    required this.gewicht,
+    required this.datum,
+    required this.uhrzeit,
+    required this.ort,
+    required this.bundesland,
+    required this.gewaesser,
+  }) {
+    assert(groesse > 0, 'Größe muss positiv sein');
+    assert(gewicht > 0, 'Gewicht muss positiv sein');
+  }
+}
 
-class MockDatabase implements DatabaseRepository {
-  List<Profile> profile = [];
+// Erweiterung für Iterable, um den Durchschnitt zu berechnen
+extension IterableAverage on Iterable<int> {
+  double get average {
+    if (isEmpty) return 0.0;
+    return reduce((a, b) => a + b) / length;
+  }
+}
 
-  List<Fang> faenge = [
-    Fang(
-        userID: 'DW',
-        gewaesser: 'Elbe',
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Aal')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true),
-    Fang(
-        userID: 'Kai',
-        gewaesser: 'Elbe',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Aal')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true,
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt'),
-    Fang(
-        userID: 'IW',
-        gewaesser: 'Elbe',
-        datum: '14.05.2024',
-        uhrzeit: '15:00 Uhr',
-        fischart: [Fischarten(fischarten: 'Karpfen')],
-        angelart: [Angelart(angelmethode: 'Grundangeln')],
-        bait: [Koeder(name: 'Teig')],
-        groesse: 50.0,
-        gewicht: 1500.0,
-        release: true,
-        ort: 'Vockerode',
-        bundesland: 'Sachsen-Anhalt'),
-  ];
-  Profile angemeldetUser = Profile(
-    userID: "DW",
-    vorname: "Daniel",
-    nachname: "Werner",
-    postleitzahl: 06792,
-    wohnort: "Sandersdorf",
-    bundesland: '',
-    email: "xy.dd@.de",
-    geburtstag: "13.04.1972",
-  );
+// Mock-Datenbankklasse
+class MockDatabase {
+  final List<FangData> _faenge = [];
 
-  List<String> naturkoeder = [
-    "Teig",
-    "Mais",
-    "Bienenmade",
-    "Kaese",
-    "Boilie",
-    "Pellet",
-    "Dentrobena",
-    "Made",
-    "Tauwurm",
-    "Fischfetzen",
-    "Koederfisch",
-    "Sonstiges"
-  ];
-  List<String> kunstkoeder = [
-    "Blinker",
-    "Spinner",
-    "Wobbler",
-    "Gummifisch",
-    "Twister",
-    "Jerkbait",
-    "Popper",
-    "Spoon",
-    "Fliege",
-    "Sonstiges",
-  ];
-  List<String> methoden = [
-    "grundangeln",
-    "posenangeln",
-    "feedern",
-    "spinnangeln",
-    "fliegenfischen",
-    "schleppangeln",
-    "stippangeln",
-    "dropshot",
-    "brandungsangeln",
-    "pilken",
-    "hochseeangeln",
-    "spirolinoangeln",
-    "sonstiges",
-  ];
-
-  List<String> bundeslaender = [
-    'Baden-Württemberg',
-    'Bayern',
-    'Berlin',
-    'Brandenburg',
-    'Bremen',
-    'Hamburg',
-    'Hessen',
-    'Mecklenburg-Vorpommern',
-    'Niedersachsen',
-    'Nordrhein-Westfalen',
-    'Rheinlamd-Pfalz',
-    'Saarland',
-    'Sachsen',
-    'Sachsen-Anhalt',
-    'Schleswig-Holstein',
-    'Thüringen',
-  ];
-
-  List<String> fischArten = [
-    'Aal',
-    'Aland',
-    'Äsche',
-    'Bachforelle',
-    'Bachsaibling',
-    'Barbe',
-    'Barsch',
-    'Blauleng',
-    'Brasse',
-    'Conger',
-    'Döbel',
-    'Dornhai',
-    'Dorsch',
-    'Elritze',
-    'Flunder',
-    'Giebel',
-    'Goldforelle',
-    'Graskarpfen',
-    'Grundel',
-    'Gründling',
-    'Güster',
-    'Hasel',
-    'Hecht',
-    'Heilbutt',
-    'Hering',
-    'Hornhecht',
-    'Huchen',
-    'Karausche',
-    'Karpfen',
-    'Katzenwels / Zwergwels',
-    'Kaulbarsch',
-    'Kliesche',
-    'Knurrhahn',
-    'Köhler',
-    'Lachs',
-    'Lachsforelle',
-    'Laube / Ukelei',
-    'Lederkarpfen',
-    'Leng',
-    'Lumb',
-    'Makrele',
-    'Maräne',
-    'Marmorkarpfen',
-    'Meeräsche',
-    'Meerforelle',
-    'Moderlieschen',
-    'Nase',
-    'Pollack',
-    'Quappe',
-    'Rapfen',
-    'Regenbogenforelle',
-    'Rotauge',
-    'Rotbarsch',
-    'Rotfeder',
-    'Saibling/Seesaibling',
-    'Schellfisch',
-    'Schleie',
-    'Schmerlen',
-    'Scholle',
-    'Schuppenkarpfen',
-    'Seeforelle',
-    'Seehecht',
-    'Seerüssling',
-    'Seeteufel',
-    'Seezunge',
-    'Silberkarpfen',
-    'Spiegelkarpfen',
-    'Steinbeisser',
-    'Steinbutt',
-    'Stint',
-    'Stör',
-    'Wels',
-    'Wildkarpfen',
-    'Wittling',
-    'Wolfsbarsch',
-    'Wolgazander',
-    'Zährte',
-    'Zander',
-    'Zeilenkarpfen',
-    'Zope',
-    ''
-  ];
-
-  Future<List<Fang>> getFang() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return faenge;
+  Future<List<FangData>> getFaenge() async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      return _faenge;
+    } catch (e) {
+      //print('Unexpected error: $e');
+      rethrow;
+    }
   }
 
-  @override
-  Future<List<Fang>> getFaenge() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return faenge;
+  Future<void> addFang(FangData newFang) async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      _faenge.add(newFang);
+    } on ArgumentError catch (e) {
+      throw DatabaseException('Ungültige Fangdaten: $e');
+    }
   }
 
-  @override
-  Future<List<String>> getFischArten() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return fischArten;
+  Future<double> getAverageFangGroesse(String userId) async {
+    try {
+      final userFaenge = _faenge.where((fang) => fang.userId == userId);
+      if (userFaenge.isEmpty) return 0.0;
+      return userFaenge.map((fang) => fang.groesse).average;
+    } catch (e) {
+      rethrow;
+    }
   }
+}
+
+// Eigene Ausnahme für Datenbankfehler
+class DatabaseException implements Exception {
+  final String message;
+
+  DatabaseException(this.message);
 
   @override
-  Future<void> addFang(Fang newFang) async {
-    await Future.delayed(const Duration(seconds: 1));
+  String toString() => 'DatabaseException: $message';
+}
 
-    faenge.add(newFang);
-  }
-
-  @override
-  Future<List<Fang>> getUserFaenge(profile) {
-    // TODO: implement getUserFaenge
-    throw UnimplementedError();
-  }
-
-  @override
-  getAngelmethoden() {
-    // TODO: implement getAngelmethoden
-    throw UnimplementedError();
-  }
-
-  @override
-  getNaturkoeder() {
-    // TODO: implement getNaturkoeder
-    throw UnimplementedError();
+// Beispiel für die Verwendung:
+void main() async {
+  final db = MockDatabase();
+  try {
+    final newFang = FangData(
+      id: '4',
+      userId: 'Max',
+      fischart: 'Aal',
+      groesse: 45,
+      gewicht: 1200,
+      datum: '2024-07-27', // Beispiel-Datum
+      uhrzeit: '12:00', // Beispiel-Uhrzeit
+      ort: 'Berlin',
+      bundesland: 'Berlin',
+      gewaesser: 'Spree',
+    );
+    await db.addFang(newFang);
+    final faenge = await db.getFaenge();
+    print(faenge);
+    final averageGroesse = await db.getAverageFangGroesse('Max');
+    print('Durchschnittliche Größe der Fänge von Max: $averageGroesse cm');
+  } catch (e) {
+    //print('Fehler: $e');
   }
 }

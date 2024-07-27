@@ -6,7 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -49,9 +50,10 @@ class _ProfileState extends State<Profile> {
     'Thüringen',
   ];
 
-  // Definieren Sie die Variablen für Benutzername und Profilbild-URL hier
   String username = "Daniel";
   String profileImageUrl = 'assets/images/hintergründe/hslogo 5.png';
+
+  bool _isEditing = true; // Variable to track editing mode
 
   Future pickImage(ImageSource source) async {
     try {
@@ -61,7 +63,52 @@ class _ProfileState extends State<Profile> {
       final imageTemporary = File(image.path);
       setState(() => this._image = imageTemporary);
     } catch (e) {
-      print('Image picker error: $e');
+      //print('Image picker error: $e');
+    }
+  }
+
+  bool _isLiked = false;
+  bool _isFollowing = false;
+
+  Future<void> _saveProfile() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        String? imageUrl;
+        if (_image != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('profile_images')
+              .child('${_usernameController.text}.jpg');
+          await ref.putFile(_image!);
+          imageUrl = await ref.getDownloadURL();
+        }
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_usernameController.text)
+            .set({
+          'username': _usernameController.text,
+          'location': _locationController.text,
+          'dob': _dobController.text,
+          'state': _selectedState,
+          'profileImageUrl': imageUrl ?? profileImageUrl,
+        });
+
+        setState(() {
+          username = _usernameController.text;
+          profileImageUrl = imageUrl ?? profileImageUrl;
+          _isEditing = false; // Switch to view mode after saving
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profil erfolgreich gespeichert')),
+        );
+      } catch (e) {
+        //print('Error saving profile: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler beim Speichern des Profils')),
+        );
+      }
     }
   }
 
@@ -238,168 +285,8 @@ class _ProfileState extends State<Profile> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Column(
-                                children: [
-                                  Stack(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 60,
-                                        backgroundImage: _image != null
-                                            ? FileImage(_image!)
-                                            : AssetImage(profileImageUrl)
-                                                as ImageProvider,
-                                      ),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: IconButton(
-                                          icon: const Icon(Icons.camera_alt),
-                                          onPressed: () {
-                                            showModalBottomSheet(
-                                              context: context,
-                                              builder: (context) => SafeArea(
-                                                child: Wrap(
-                                                  children: [
-                                                    ListTile(
-                                                      leading: const Icon(
-                                                          Icons.camera),
-                                                      title:
-                                                          const Text('Kamera'),
-                                                      onTap: () {
-                                                        pickImage(
-                                                            ImageSource.camera);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    ListTile(
-                                                      leading: const Icon(
-                                                          Icons.image),
-                                                      title:
-                                                          const Text('Galerie'),
-                                                      onTap: () {
-                                                        pickImage(ImageSource
-                                                            .gallery);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    "Profil",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 40.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: _usernameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Username',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Bitte gib einen Username ein';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: _locationController,
-                              decoration: const InputDecoration(
-                                labelText: 'Wohnort',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Bitte gib einen Wohnort ein';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            DropdownButtonFormField<String>(
-                              decoration: const InputDecoration(
-                                labelText: 'Bundesland',
-                                border: OutlineInputBorder(),
-                              ),
-                              value: _selectedState,
-                              items: _states.map((String state) {
-                                return DropdownMenuItem<String>(
-                                  value: state,
-                                  child: Text(state),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedState = newValue;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Bitte wähle ein Bundesland aus';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: _dobController,
-                              decoration: const InputDecoration(
-                                labelText: 'Geburtsdatum',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Bitte gib ein Geburtsdatum ein';
-                                }
-                                return null;
-                              },
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime(2101),
-                                );
-                                if (pickedDate != null) {
-                                  setState(() {
-                                    _dobController.text =
-                                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                  });
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Save profile information
-                                }
-                              },
-                              child: const Text('Speichern'),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child:
+                          _isEditing ? _buildEditForm() : _buildProfileView(),
                     ),
                   ),
                 ],
@@ -408,6 +295,260 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEditForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          Center(
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundImage: _image != null
+                          ? FileImage(_image!)
+                          : AssetImage(profileImageUrl) as ImageProvider,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SafeArea(
+                              child: Wrap(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.camera),
+                                    title: const Text('Kamera'),
+                                    onTap: () {
+                                      pickImage(ImageSource.camera);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.image),
+                                    title: const Text('Galerie'),
+                                    onTap: () {
+                                      pickImage(ImageSource.gallery);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Profil",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 40.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _usernameController,
+            decoration: const InputDecoration(
+              labelText: 'Username',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Bitte gib einen Username ein';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _locationController,
+            decoration: const InputDecoration(
+              labelText: 'Wohnort',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Bitte gib einen Wohnort ein';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Bundesland',
+              border: OutlineInputBorder(),
+            ),
+            value: _selectedState,
+            items: _states.map((String state) {
+              return DropdownMenuItem<String>(
+                value: state,
+                child: Text(state),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              setState(() {
+                _selectedState = newValue;
+              });
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Bitte wähle ein Bundesland aus';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _dobController,
+            decoration: const InputDecoration(
+              labelText: 'Geburtsdatum',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Bitte gib ein Geburtsdatum ein';
+              }
+              return null;
+            },
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  _dobController.text =
+                      "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _saveProfile,
+            child: const Text('Speichern'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileView() {
+    return Column(
+      children: [
+        Card(
+          color: Colors.white.withOpacity(0.1),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: _image != null
+                            ? FileImage(_image!)
+                            : AssetImage(profileImageUrl) as ImageProvider,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        username,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 40.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ListTile(
+                  title: Text(
+                    'Wohnort: ${_locationController.text}',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  subtitle: Text(
+                    'Bundesland: $_selectedState',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ListTile(
+                  title: Text(
+                    'Geburtsdatum: ${_dobController.text}',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Bearbeiten'),
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: const Color.fromARGB(255, 99, 116, 100),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10), // Add spacing between card and icons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end, // Center icons
+          children: [
+            IconButton(
+              icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border),
+              color: _isLiked
+                  ? const Color.fromARGB(255, 2, 111, 2)
+                  : Colors.white,
+              onPressed: () {
+                setState(() {
+                  _isLiked = !_isLiked;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(_isFollowing ? Icons.person_remove : Icons.person_add),
+              color: const Color.fromARGB(255, 2, 111, 2),
+              onPressed: () {
+                setState(() {
+                  _isFollowing = !_isFollowing;
+                });
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

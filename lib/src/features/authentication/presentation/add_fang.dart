@@ -5,6 +5,7 @@ import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang2.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddFang extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -32,24 +33,29 @@ class _AddFangState extends State<AddFang> {
   final TextEditingController _gewaesserController = TextEditingController();
   String? _selectedBundesland;
 
-  final List<String> _bundeslaender = [
-    'Baden-Württemberg',
-    'Bayern',
-    'Berlin',
-    'Brandenburg',
-    'Bremen',
-    'Hamburg',
-    'Hessen',
-    'Mecklenburg-Vorpommern',
-    'Niedersachsen',
-    'Nordrhein-Westfalen',
-    'Rheinland-Pfalz',
-    'Saarland',
-    'Sachsen',
-    'Sachsen-Anhalt',
-    'Schleswig-Holstein',
-    'Thüringen',
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<String>> _getBundeslaender() async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('bundeslaender').get();
+      return List<String>.from(doc['liste'] as List);
+    } catch (e) {
+      print('Error getting bundeslaender: $e');
+      return [];
+    }
+  }
+
+  Future<List<String>> _getFischArten() async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('metadata').doc('fischarten').get();
+      return List<String>.from(doc['arten'] as List);
+    } catch (e) {
+      print('Error getting fischarten: $e');
+      return [];
+    }
+  }
 
   static const TextStyle blackLabelStyle = TextStyle(color: Colors.black);
 
@@ -66,7 +72,7 @@ class _AddFangState extends State<AddFang> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Datumauswahl abgebrochen')),
+        const SnackBar(content: Text('Datumauswahl abgebrochen')),
       );
     }
   }
@@ -90,7 +96,7 @@ class _AddFangState extends State<AddFang> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Standortberechtigung verweigert')),
+            const SnackBar(content: Text('Standortberechtigung verweigert')),
           );
           return;
         }
@@ -98,7 +104,8 @@ class _AddFangState extends State<AddFang> {
 
       if (permission == LocationPermission.deniedForever) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Standortberechtigung dauerhaft verweigert')),
+          const SnackBar(
+              content: Text('Standortberechtigung dauerhaft verweigert')),
         );
         return;
       }
@@ -174,7 +181,7 @@ class _AddFangState extends State<AddFang> {
               child: Form(
                 child: Column(
                   children: [
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
@@ -195,7 +202,7 @@ class _AddFangState extends State<AddFang> {
                     ),
                     const SizedBox(height: 10),
                     FutureBuilder<List<String>>(
-                      future: widget.databaseRepository.getFischArten(),
+                      future: _getFischArten(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData &&
                             snapshot.connectionState == ConnectionState.done) {
@@ -244,7 +251,7 @@ class _AddFangState extends State<AddFang> {
                                       style: blackLabelStyle,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: TextFormField(
                                       controller: _gewichtController,
@@ -284,7 +291,7 @@ class _AddFangState extends State<AddFang> {
                                       style: blackLabelStyle,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: TextFormField(
                                       controller: _uhrzeitController,
@@ -316,35 +323,47 @@ class _AddFangState extends State<AddFang> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   suffixIcon: IconButton(
-                                    icon: Icon(Icons.gps_fixed),
+                                    icon: const Icon(Icons.gps_fixed),
                                     onPressed: _getCurrentLocation,
                                   ),
                                 ),
                                 style: blackLabelStyle,
                               ),
                               const SizedBox(height: 16),
-                              DropdownButtonFormField<String>(
-                                value: _selectedBundesland,
-                                decoration: InputDecoration(
-                                  labelText: 'Bundesland',
-                                  labelStyle: blackLabelStyle,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                items: _bundeslaender.map((String bundesland) {
-                                  return DropdownMenuItem<String>(
-                                    value: bundesland,
-                                    child: Text(bundesland,
-                                        style: blackLabelStyle),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedBundesland = newValue;
-                                  });
+                              FutureBuilder<List<String>>(
+                                future: _getBundeslaender(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return DropdownButtonFormField<String>(
+                                      value: _selectedBundesland,
+                                      decoration: InputDecoration(
+                                        labelText: 'Bundesland',
+                                        labelStyle: blackLabelStyle,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      items: snapshot.data!
+                                          .map((String bundesland) {
+                                        return DropdownMenuItem<String>(
+                                          value: bundesland,
+                                          child: Text(bundesland,
+                                              style: blackLabelStyle),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedBundesland = newValue;
+                                        });
+                                      },
+                                      style: blackLabelStyle,
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Text("Error: ${snapshot.error}");
+                                  }
+                                  return CircularProgressIndicator();
                                 },
-                                style: blackLabelStyle,
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
@@ -373,7 +392,7 @@ class _AddFangState extends State<AddFang> {
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(

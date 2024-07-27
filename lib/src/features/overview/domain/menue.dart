@@ -4,7 +4,6 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
-import 'package:hot_spot/src/features/authentication/presentation/login_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
