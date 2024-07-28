@@ -1,12 +1,3 @@
-/* 
-  X Zugriff auf User (UID, Email, DisplayName, PhotoURL)
-  X Registierung
-  X Login
-  X Logout
-  X AuthStateChanges
-  
-   */
-
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepository {
@@ -22,6 +13,12 @@ class AuthRepository {
   /// or `null` if no User is logged in
   User? getCurrentUser() {
     return _firebaseAuth.currentUser;
+  }
+
+  /// returns the UID of the currently logged in user
+  /// or an empty string if no user is logged in
+  String getCurrentUserId() {
+    return _firebaseAuth.currentUser?.uid ?? '';
   }
 
   Future<void> signUpWithEmailAndPassword(String email, String pw) {

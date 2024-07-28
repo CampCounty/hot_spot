@@ -84,7 +84,9 @@ class _AddFangState extends State<AddFang> {
     );
     if (picked != null) {
       setState(() {
-        _uhrzeitController.text = picked.format(context);
+        // Formatieren Sie die Zeit im 24-Stunden-Format
+        _uhrzeitController.text =
+            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -126,10 +128,9 @@ class _AddFangState extends State<AddFang> {
   void _navigateToNextScreen() {
     if (selectedFischart == null ||
         _groesseController.text.isEmpty ||
+        _gewichtController.text.isEmpty ||
         _datumController.text.isEmpty ||
         _uhrzeitController.text.isEmpty ||
-        _ortController.text.isEmpty ||
-        _selectedBundesland == null ||
         _gewaesserController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -138,15 +139,35 @@ class _AddFangState extends State<AddFang> {
       return;
     }
 
+    // Generieren Sie eine temporäre ID für den neuen Fang
+    String tempId = FirebaseFirestore.instance.collection('faenge').doc().id;
+
+    // Parsen Sie das Datum und die Uhrzeit zu einem DateTime-Objekt
+    DateTime fangDatum;
+    try {
+      // Verwenden Sie DateFormat, um das Datum zu parsen
+      final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+      String dateTimeString =
+          '${_datumController.text} ${_uhrzeitController.text}';
+      fangDatum = dateFormat.parse(dateTimeString);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ungültiges Datum oder Uhrzeitformat: $e')),
+      );
+      return;
+    }
+
     FangData fangData = FangData(
-      fischart: selectedFischart,
-      groesse: int.tryParse(_groesseController.text),
-      gewicht: int.tryParse(_gewichtController.text),
-      datum: _datumController.text,
-      uhrzeit: _uhrzeitController.text,
-      ort: _ortController.text,
-      bundesland: _selectedBundesland,
+      id: tempId,
+      userID: widget.authRepository.getCurrentUserId(),
+      fischart: selectedFischart!,
+      groesse: double.tryParse(_groesseController.text) ?? 0.0,
+      gewicht: double.tryParse(_gewichtController.text) ?? 0.0,
       gewaesser: _gewaesserController.text,
+      datum: fangDatum,
+      bildUrl: null,
+      angelmethode: null,
+      naturkoeder: null,
     );
 
     Navigator.of(context).push(

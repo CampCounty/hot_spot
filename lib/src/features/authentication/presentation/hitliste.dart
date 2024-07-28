@@ -181,7 +181,7 @@ class _HitlisteState extends State<Hitliste> {
                           DataColumn(
                             label: Container(
                               width: 50, // Breite der Spalte
-                              child: Center(
+                              child: const Center(
                                 child: Text(
                                   'Platz',
                                   style: TextStyle(
@@ -196,12 +196,12 @@ class _HitlisteState extends State<Hitliste> {
                           DataColumn(
                             label: Container(
                               width: 150, // Breite der Spalte
-                              child: Center(
+                              child: const Center(
                                 child: Text(
                                   'Username',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: const Color.fromARGB(255, 243, 241,
+                                    color: Color.fromARGB(255, 243, 241,
                                         241), // Farbe der Überschrift
                                   ),
                                 ),
@@ -211,12 +211,12 @@ class _HitlisteState extends State<Hitliste> {
                           DataColumn(
                             label: Container(
                               width: 50, // Breite der Spalte
-                              child: Center(
+                              child: const Center(
                                 child: Text(
                                   'Größe',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: const Color.fromARGB(255, 243, 241,
+                                    color: Color.fromARGB(255, 243, 241,
                                         241), // Farbe der Überschrift
                                   ),
                                 ),
@@ -226,12 +226,12 @@ class _HitlisteState extends State<Hitliste> {
                           DataColumn(
                             label: Container(
                               width: 150, // Breite der Spalte
-                              child: Center(
+                              child: const Center(
                                 child: Text(
                                   'Gewässer',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold, // Fett
-                                    color: const Color.fromARGB(255, 243, 241,
+                                    color: Color.fromARGB(255, 243, 241,
                                         241), // Farbe der Überschrift
                                   ),
                                 ),

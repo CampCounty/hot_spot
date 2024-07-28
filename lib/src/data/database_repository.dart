@@ -220,6 +220,25 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
     }
   }
 
+  Future<List<FangData>> getLatestFaenge(String userId,
+      {int limit = 10}) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('faenge')
+          .where('userID', isEqualTo: userId)
+          .orderBy('datum', descending: true)
+          .limit(limit)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => FangData.fromMap(doc.data(), doc.id))
+          .toList();
+    } catch (e) {
+      print('Error fetching latest faenge: $e');
+      return [];
+    }
+  }
+
   @override
   Future<double> getAverageFangGroesse(String userId) async {
     try {

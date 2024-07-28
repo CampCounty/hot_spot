@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:hot_spot/src/data/mock_database.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +9,8 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:hot_spot/src/data/fang_data.dart';
 
 class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -53,7 +56,7 @@ class _ProfileState extends State<Profile> {
   String username = "Daniel";
   String profileImageUrl = 'assets/images/hintergründe/hslogo 5.png';
 
-  bool _isEditing = true; // Variable to track editing mode
+  bool _isEditing = false; // Variable to track editing mode
 
   Future pickImage(ImageSource source) async {
     try {
@@ -486,7 +489,7 @@ class _ProfileState extends State<Profile> {
                 ListTile(
                   title: Text(
                     'Wohnort: ${_locationController.text}',
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   subtitle: Text(
                     'Bundesland: $_selectedState',
@@ -522,31 +525,137 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ),
-        const SizedBox(height: 10), // Add spacing between card and icons
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end, // Center icons
-          children: [
-            IconButton(
-              icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border),
-              color: _isLiked
-                  ? const Color.fromARGB(255, 2, 111, 2)
-                  : Colors.white,
-              onPressed: () {
-                setState(() {
-                  _isLiked = !_isLiked;
-                });
-              },
-            ),
-            IconButton(
-              icon: Icon(_isFollowing ? Icons.person_remove : Icons.person_add),
-              color: const Color.fromARGB(255, 2, 111, 2),
-              onPressed: () {
-                setState(() {
-                  _isFollowing = !_isFollowing;
-                });
-              },
-            ),
-          ],
+        const SizedBox(height: 20),
+        const Text(
+          'Meine Fänge',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder<List<FangData>>(
+          future: widget.databaseRepository
+              .getUserFaenge(widget.authRepository.getCurrentUserId()),
+          builder: (context, AsyncSnapshot<List<FangData>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Fehler beim Laden der Fänge: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Keine Fänge gefunden',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+
+            return Column(
+              children: [
+                SizedBox(
+                  height: 300, // Anpassbare Höhe
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      FangData fang = snapshot.data![index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        color: Colors.white.withOpacity(0.1),
+                        child: ListTile(
+                          leading: fang.bildUrl != null &&
+                                  fang.bildUrl!.isNotEmpty
+                              ? Image.network(
+                                  fang.bildUrl!,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error,
+                                        color: Colors.red);
+                                  },
+                                )
+                              : const Icon(Icons.image_not_supported,
+                                  color: Colors.white),
+                          title: Text(
+                            fang.fischart,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum as DateTime)}',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                              Text(
+                                'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                              Text(
+                                'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                              Text(
+                                'Gewässer: ${fang.gewaesser}',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            // Hier können Sie eine Detailansicht für den Fang öffnen
+                            // z.B. Navigator.push(context, MaterialPageRoute(...));
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border),
+                      color: _isLiked
+                          ? const Color.fromARGB(255, 2, 111, 2)
+                          : Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          _isLiked = !_isLiked;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(_isFollowing
+                          ? Icons.person_remove
+                          : Icons.person_add),
+                      color: const Color.fromARGB(255, 2, 111, 2),
+                      onPressed: () {
+                        setState(() {
+                          _isFollowing = !_isFollowing;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

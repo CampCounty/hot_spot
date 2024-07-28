@@ -1,35 +1,7 @@
-// Modellklasse für Fangdaten
-class FangData {
-  final String id;
-  final String userId;
-  final String fischart;
-  final int groesse;
-  final int gewicht;
-  final String datum;
-  final String uhrzeit;
-  final String ort;
-  final String bundesland;
-  final String gewaesser;
-
-  FangData({
-    required this.id,
-    required this.userId,
-    required this.fischart,
-    required this.groesse,
-    required this.gewicht,
-    required this.datum,
-    required this.uhrzeit,
-    required this.ort,
-    required this.bundesland,
-    required this.gewaesser,
-  }) {
-    assert(groesse > 0, 'Größe muss positiv sein');
-    assert(gewicht > 0, 'Gewicht muss positiv sein');
-  }
-}
+import 'package:hot_spot/src/data/fang_data.dart';
 
 // Erweiterung für Iterable, um den Durchschnitt zu berechnen
-extension IterableAverage on Iterable<int> {
+extension IterableAverage on Iterable<double> {
   double get average {
     if (isEmpty) return 0.0;
     return reduce((a, b) => a + b) / length;
@@ -45,7 +17,6 @@ class MockDatabase {
       await Future.delayed(const Duration(seconds: 1));
       return _faenge;
     } catch (e) {
-      //print('Unexpected error: $e');
       rethrow;
     }
   }
@@ -54,14 +25,14 @@ class MockDatabase {
     try {
       await Future.delayed(const Duration(seconds: 1));
       _faenge.add(newFang);
-    } on ArgumentError catch (e) {
+    } catch (e) {
       throw DatabaseException('Ungültige Fangdaten: $e');
     }
   }
 
   Future<double> getAverageFangGroesse(String userId) async {
     try {
-      final userFaenge = _faenge.where((fang) => fang.userId == userId);
+      final userFaenge = _faenge.where((fang) => fang.userID == userId);
       if (userFaenge.isEmpty) return 0.0;
       return userFaenge.map((fang) => fang.groesse).average;
     } catch (e) {
@@ -86,15 +57,15 @@ void main() async {
   try {
     final newFang = FangData(
       id: '4',
-      userId: 'Max',
+      userID: 'Max',
       fischart: 'Aal',
       groesse: 45,
-      gewicht: 1200,
-      datum: '2024-07-27', // Beispiel-Datum
-      uhrzeit: '12:00', // Beispiel-Uhrzeit
-      ort: 'Berlin',
-      bundesland: 'Berlin',
+      gewicht: 1.2,
       gewaesser: 'Spree',
+      datum: DateTime.now(),
+      bildUrl: null,
+      angelmethode: null,
+      naturkoeder: null,
     );
     await db.addFang(newFang);
     final faenge = await db.getFaenge();
@@ -102,6 +73,6 @@ void main() async {
     final averageGroesse = await db.getAverageFangGroesse('Max');
     print('Durchschnittliche Größe der Fänge von Max: $averageGroesse cm');
   } catch (e) {
-    //print('Fehler: $e');
+    print('Fehler: $e');
   }
 }
