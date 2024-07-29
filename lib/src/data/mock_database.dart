@@ -66,6 +66,7 @@ void main() async {
       bildUrl: null,
       angelmethode: null,
       naturkoeder: null,
+      username: 'MockUser',
     );
     await db.addFang(newFang);
     final faenge = await db.getFaenge();

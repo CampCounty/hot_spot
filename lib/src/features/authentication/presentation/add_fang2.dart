@@ -132,6 +132,7 @@ class _AddFang2State extends State<AddFang2> {
         'angelmethode': selectedAngelmethode,
         'koederTyp': isNaturkoeder ? 'Naturköder' : 'Kunstköder',
         'koeder': selectedKoeder,
+        'username': widget.fangData.username,
         'bildUrl': uploadedImageUrl,
         'timestamp': FieldValue.serverTimestamp(),
       });

@@ -193,23 +193,36 @@ class FirestoreDatabase implements DatabaseRepository {
 
   @override
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    if (userId.isEmpty) {
+      print('Warnung: Versuch, ein Benutzerprofil mit leerer userId abzurufen');
+      return null;
+    }
+
     try {
-      DocumentSnapshot doc =
-          await _firestore.collection('users').doc(userId).get();
-      return doc.data() as Map<String, dynamic>?;
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>;
+      } else {
+        print('Kein Benutzerprofil gefunden für userId: $userId');
+        return null;
+      }
     } catch (e) {
-      _logger.e('Error getting user profile: $e');
+      print('Fehler beim Abrufen des Benutzerprofils: $e');
       return null;
     }
   }
 
   @override
   Future<void> saveUserProfile(
-      String userId, Map<String, dynamic> profileData) async {
+      String userID, Map<String, dynamic> profileData) async {
     try {
       await _firestore
           .collection('users')
-          .doc(userId)
+          .doc(userID)
           .set(profileData, SetOptions(merge: true));
     } catch (e) {
       _logger.e('Error saving user profile: $e');

@@ -8,7 +8,7 @@ abstract class DatabaseRepository {
   Future<List<String>> getFischArten();
   Future<List<String>> getAngelmethoden();
   Future<List<String>> getNaturkoeder();
-  Future<void> saveUserProfile(String userId, Map<String, dynamic> profileData);
+  Future<void> saveUserProfile(String userID, Map<String, dynamic> profileData);
   Future<Map<String, dynamic>?> getUserProfile(String userId);
   Future<void> updateFang(String fangId, Map<String, dynamic> newData);
   Future<void> deleteFang(String fangId);
@@ -108,11 +108,11 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
 
   @override
   Future<void> saveUserProfile(
-      String userId, Map<String, dynamic> profileData) async {
+      String userID, Map<String, dynamic> profileData) async {
     try {
       await _firestore
           .collection('users')
-          .doc(userId)
+          .doc(userID)
           .set(profileData, SetOptions(merge: true));
     } catch (e) {
       //print('Error saving user profile: $e');
@@ -220,12 +220,12 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
     }
   }
 
-  Future<List<FangData>> getLatestFaenge(String userId,
+  Future<List<FangData>> getLatestFaenge(String userID,
       {int limit = 10}) async {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('faenge')
-          .where('userID', isEqualTo: userId)
+          .where('userID', isEqualTo: userID)
           .orderBy('datum', descending: true)
           .limit(limit)
           .get();
@@ -240,11 +240,11 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
   }
 
   @override
-  Future<double> getAverageFangGroesse(String userId) async {
+  Future<double> getAverageFangGroesse(String userID) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
           .collection('faenge')
-          .where('userId', isEqualTo: userId)
+          .where('userID', isEqualTo: userID)
           .get();
 
       if (querySnapshot.size == 0) return 0.0;

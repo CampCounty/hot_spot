@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hot_spot/src/data/mock_database.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +7,6 @@ import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 
@@ -16,10 +14,10 @@ class Profile extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
   const Profile({
-    super.key,
+    Key? key,
     required this.databaseRepository,
     required this.authRepository,
-  });
+  }) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -31,7 +29,6 @@ class _ProfileState extends State<Profile> {
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
 
   String? _selectedState;
   final List<String> _states = [
@@ -56,7 +53,35 @@ class _ProfileState extends State<Profile> {
   String username = "Daniel";
   String profileImageUrl = 'assets/images/hintergründe/hslogo 5.png';
 
-  bool _isEditing = false; // Variable to track editing mode
+  bool _isEditing = false;
+  bool _isLiked = false;
+  bool _isFollowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    try {
+      String uid = widget.authRepository.getCurrentUserId();
+      Map<String, dynamic>? userData =
+          await widget.databaseRepository.getUserProfile(uid);
+      if (userData != null) {
+        setState(() {
+          username = userData['username'] ?? "Daniel";
+          _usernameController.text = username;
+          _locationController.text = userData['location'] ?? "";
+          _selectedState = userData['state'];
+          profileImageUrl = userData['profileImageUrl'] ??
+              'assets/images/hintergründe/hslogo 5.png';
+        });
+      }
+    } catch (e) {
+      print('Error loading profile data: $e');
+    }
+  }
 
   Future pickImage(ImageSource source) async {
     try {
@@ -66,48 +91,44 @@ class _ProfileState extends State<Profile> {
       final imageTemporary = File(image.path);
       setState(() => this._image = imageTemporary);
     } catch (e) {
-      //print('Image picker error: $e');
+      print('Image picker error: $e');
     }
   }
-
-  bool _isLiked = false;
-  bool _isFollowing = false;
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
       try {
+        String uid = widget.authRepository.getCurrentUserId();
         String? imageUrl;
         if (_image != null) {
           final ref = FirebaseStorage.instance
               .ref()
               .child('profile_images')
-              .child('${_usernameController.text}.jpg');
+              .child('$uid.jpg');
           await ref.putFile(_image!);
           imageUrl = await ref.getDownloadURL();
         }
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(_usernameController.text)
-            .set({
+        Map<String, dynamic> userData = {
           'username': _usernameController.text,
           'location': _locationController.text,
-          'dob': _dobController.text,
           'state': _selectedState,
           'profileImageUrl': imageUrl ?? profileImageUrl,
-        });
+        };
+
+        await widget.databaseRepository.saveUserProfile(uid, userData);
 
         setState(() {
           username = _usernameController.text;
           profileImageUrl = imageUrl ?? profileImageUrl;
-          _isEditing = false; // Switch to view mode after saving
+          _isEditing = false;
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profil erfolgreich gespeichert')),
         );
       } catch (e) {
-        //print('Error saving profile: $e');
+        print('Error saving profile: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Fehler beim Speichern des Profils')),
         );
@@ -118,148 +139,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Menu',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(profileImageUrl),
-                          radius: 30,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          username,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.home,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Home',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                        username: '',
-                        profileImageUrl: '',
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.add,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Fang melden',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddFang(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                        username: '',
-                        profileImageUrl: '',
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.person_2_rounded,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Profil',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.list_outlined,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Hitliste',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Settings',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.info,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('About',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Logout',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StartScreen(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                        username: '',
-                        profileImageUrl: '',
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: _buildDrawer(),
       body: Stack(
         children: [
           Container(
@@ -297,6 +177,122 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage(profileImageUrl),
+                        radius: 30,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        username,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            _buildDrawerItem(
+                Icons.home, 'Home', () => _navigateToHome(context)),
+            _buildDrawerItem(
+                Icons.add, 'Fang melden', () => _navigateToAddFang(context)),
+            _buildDrawerItem(
+                Icons.person_2_rounded, 'Profil', () => Navigator.pop(context)),
+            _buildDrawerItem(
+                Icons.list_outlined, 'Hitliste', () => Navigator.pop(context)),
+            _buildDrawerItem(
+                Icons.settings, 'Settings', () => Navigator.pop(context)),
+            _buildDrawerItem(Icons.info, 'About', () => Navigator.pop(context)),
+            _buildDrawerItem(
+                Icons.logout, 'Logout', () => _navigateToStartScreen(context)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ListTile _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Color.fromARGB(255, 43, 43, 43)),
+      title:
+          Text(title, style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
+      onTap: onTap,
+    );
+  }
+
+  void _navigateToHome(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(
+          databaseRepository: widget.databaseRepository,
+          authRepository: widget.authRepository,
+          username: '',
+          profileImageUrl: '',
+        ),
+      ),
+    );
+  }
+
+  void _navigateToAddFang(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddFang(
+          databaseRepository: widget.databaseRepository,
+          authRepository: widget.authRepository,
+          username: '',
+          profileImageUrl: '',
+        ),
+      ),
+    );
+  }
+
+  void _navigateToStartScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StartScreen(
+          databaseRepository: widget.databaseRepository,
+          authRepository: widget.authRepository,
+          username: '',
+          profileImageUrl: '',
+        ),
       ),
     );
   }
@@ -418,34 +414,6 @@ class _ProfileState extends State<Profile> {
             },
           ),
           const SizedBox(height: 20),
-          TextFormField(
-            controller: _dobController,
-            decoration: const InputDecoration(
-              labelText: 'Geburtsdatum',
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Bitte gib ein Geburtsdatum ein';
-              }
-              return null;
-            },
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime(2101),
-              );
-              if (pickedDate != null) {
-                setState(() {
-                  _dobController.text =
-                      "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                });
-              }
-            },
-          ),
-          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _saveProfile,
             child: const Text('Speichern'),
@@ -471,7 +439,9 @@ class _ProfileState extends State<Profile> {
                         radius: 40,
                         backgroundImage: _image != null
                             ? FileImage(_image!)
-                            : AssetImage(profileImageUrl) as ImageProvider,
+                            : (profileImageUrl.startsWith('http')
+                                ? NetworkImage(profileImageUrl)
+                                : AssetImage(profileImageUrl)) as ImageProvider,
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -494,13 +464,6 @@ class _ProfileState extends State<Profile> {
                   subtitle: Text(
                     'Bundesland: $_selectedState',
                     style: const TextStyle(color: Colors.black54),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ListTile(
-                  title: Text(
-                    'Geburtsdatum: ${_dobController.text}',
-                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -535,129 +498,129 @@ class _ProfileState extends State<Profile> {
           ),
         ),
         const SizedBox(height: 10),
-        FutureBuilder<List<FangData>>(
-          future: widget.databaseRepository
-              .getUserFaenge(widget.authRepository.getCurrentUserId()),
-          builder: (context, AsyncSnapshot<List<FangData>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Fehler beim Laden der Fänge: ${snapshot.error}',
-                  style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Keine Fänge gefunden',
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
-            }
+        _buildFaengeList(),
+      ],
+    );
+  }
 
-            return Column(
+  Widget _buildFaengeList() {
+    return FutureBuilder<List<FangData>>(
+      future: widget.databaseRepository
+          .getUserFaenge(widget.authRepository.getCurrentUserId()),
+      builder: (context, AsyncSnapshot<List<FangData>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Fehler beim Laden der Fänge: ${snapshot.error}',
+              style: const TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'Keine Fänge gefunden',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+
+        return Column(
+          children: [
+            SizedBox(
+              height: 300, // Anpassbare Höhe
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  FangData fang = snapshot.data![index];
+                  return Card(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    color: Colors.white.withOpacity(0.1),
+                    child: ListTile(
+                      leading: fang.bildUrl != null && fang.bildUrl!.isNotEmpty
+                          ? Image.network(
+                              fang.bildUrl!,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error,
+                                    color: Colors.red);
+                              },
+                            )
+                          : const Icon(Icons.image_not_supported,
+                              color: Colors.white),
+                      title: Text(
+                        fang.fischart,
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          Text(
+                            'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          Text(
+                            'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          Text(
+                            'Gewässer: ${fang.gewaesser}',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        // Hier können Sie eine Detailansicht für den Fang öffnen
+                        // z.B. Navigator.push(context, MaterialPageRoute(...));
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SizedBox(
-                  height: 300, // Anpassbare Höhe
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      FangData fang = snapshot.data![index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        color: Colors.white.withOpacity(0.1),
-                        child: ListTile(
-                          leading: fang.bildUrl != null &&
-                                  fang.bildUrl!.isNotEmpty
-                              ? Image.network(
-                                  fang.bildUrl!,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.error,
-                                        color: Colors.red);
-                                  },
-                                )
-                              : const Icon(Icons.image_not_supported,
-                                  color: Colors.white),
-                          title: Text(
-                            fang.fischart,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum as DateTime)}',
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                              Text(
-                                'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                              Text(
-                                'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                              Text(
-                                'Gewässer: ${fang.gewaesser}',
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            // Hier können Sie eine Detailansicht für den Fang öffnen
-                            // z.B. Navigator.push(context, MaterialPageRoute(...));
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                IconButton(
+                  icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border),
+                  color: _isLiked
+                      ? const Color.fromARGB(255, 2, 111, 2)
+                      : Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      _isLiked = !_isLiked;
+                    });
+                  },
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                          _isLiked ? Icons.favorite : Icons.favorite_border),
-                      color: _isLiked
-                          ? const Color.fromARGB(255, 2, 111, 2)
-                          : Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          _isLiked = !_isLiked;
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(_isFollowing
-                          ? Icons.person_remove
-                          : Icons.person_add),
-                      color: const Color.fromARGB(255, 2, 111, 2),
-                      onPressed: () {
-                        setState(() {
-                          _isFollowing = !_isFollowing;
-                        });
-                      },
-                    ),
-                  ],
+                IconButton(
+                  icon: Icon(
+                      _isFollowing ? Icons.person_remove : Icons.person_add),
+                  color: const Color.fromARGB(255, 2, 111, 2),
+                  onPressed: () {
+                    setState(() {
+                      _isFollowing = !_isFollowing;
+                    });
+                  },
                 ),
               ],
-            );
-          },
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

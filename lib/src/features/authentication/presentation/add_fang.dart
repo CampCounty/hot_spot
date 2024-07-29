@@ -10,14 +10,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AddFang extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
+  final String username;
+  final String profileImageUrl;
 
   const AddFang({
-    super.key,
+    Key? key,
     required this.databaseRepository,
     required this.authRepository,
-    required String username,
-    required String profileImageUrl,
-  });
+    required this.username,
+    required this.profileImageUrl,
+  }) : super(key: key);
 
   @override
   State<AddFang> createState() => _AddFangState();
@@ -84,7 +86,6 @@ class _AddFangState extends State<AddFang> {
     );
     if (picked != null) {
       setState(() {
-        // Formatieren Sie die Zeit im 24-Stunden-Format
         _uhrzeitController.text =
             '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
@@ -125,7 +126,7 @@ class _AddFangState extends State<AddFang> {
     }
   }
 
-  void _navigateToNextScreen() {
+  void _navigateToNextScreen() async {
     if (selectedFischart == null ||
         _groesseController.text.isEmpty ||
         _gewichtController.text.isEmpty ||
@@ -139,13 +140,10 @@ class _AddFangState extends State<AddFang> {
       return;
     }
 
-    // Generieren Sie eine temporäre ID für den neuen Fang
     String tempId = FirebaseFirestore.instance.collection('faenge').doc().id;
 
-    // Parsen Sie das Datum und die Uhrzeit zu einem DateTime-Objekt
     DateTime fangDatum;
     try {
-      // Verwenden Sie DateFormat, um das Datum zu parsen
       final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
       String dateTimeString =
           '${_datumController.text} ${_uhrzeitController.text}';
@@ -157,9 +155,12 @@ class _AddFangState extends State<AddFang> {
       return;
     }
 
+    String currentUserID = widget.authRepository.getCurrentUserId();
+    String currentUsername = await widget.authRepository.getCurrentUsername();
+
     FangData fangData = FangData(
       id: tempId,
-      userID: widget.authRepository.getCurrentUserId(),
+      userID: currentUserID,
       fischart: selectedFischart!,
       groesse: double.tryParse(_groesseController.text) ?? 0.0,
       gewicht: double.tryParse(_gewichtController.text) ?? 0.0,
@@ -168,6 +169,7 @@ class _AddFangState extends State<AddFang> {
       bildUrl: null,
       angelmethode: null,
       naturkoeder: null,
+      username: currentUsername,
     );
 
     Navigator.of(context).push(
@@ -175,8 +177,8 @@ class _AddFangState extends State<AddFang> {
         builder: (context) => AddFang2(
           databaseRepository: widget.databaseRepository,
           authRepository: widget.authRepository,
-          username: '',
-          profileImageUrl: '',
+          username: currentUsername,
+          profileImageUrl: widget.profileImageUrl,
           fangData: fangData,
         ),
       ),
@@ -449,5 +451,16 @@ class _AddFangState extends State<AddFang> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _groesseController.dispose();
+    _gewichtController.dispose();
+    _datumController.dispose();
+    _uhrzeitController.dispose();
+    _ortController.dispose();
+    _gewaesserController.dispose();
+    super.dispose();
   }
 }

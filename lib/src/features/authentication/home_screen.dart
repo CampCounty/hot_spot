@@ -7,18 +7,21 @@ import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:intl/intl.dart';
+import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
+  final String username;
+  final String profileImageUrl;
 
   const HomeScreen({
-    super.key,
+    Key? key,
     required this.databaseRepository,
     required this.authRepository,
-    required String username,
-    required String profileImageUrl,
-  });
+    required this.username,
+    required this.profileImageUrl,
+  }) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -26,6 +29,28 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late String _username;
+  late String _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _username = widget.username;
+    _profileImageUrl = widget.profileImageUrl;
+    refreshProfile();
+  }
+
+  Future<void> refreshProfile() async {
+    String userId = widget.authRepository.getCurrentUserId();
+    Map<String, dynamic>? userProfile =
+        await widget.databaseRepository.getUserProfile(userId);
+    if (userProfile != null && mounted) {
+      setState(() {
+        _username = userProfile['username'] ?? '';
+        _profileImageUrl = userProfile['profileImageUrl'] ?? '';
+      });
+    }
+  }
 
   Future<List<FangData>> _getLatestFaenge() async {
     try {
@@ -54,16 +79,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _logout() async {
-    await widget.authRepository.logout();
-    Navigator.of(context).pushReplacementNamed('/login');
+    try {
+      await widget.authRepository.logout();
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => StartScreen(
+            databaseRepository: widget.databaseRepository,
+            authRepository: widget.authRepository,
+            username: '',
+            profileImageUrl: '',
+          ),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      print('Fehler beim Ausloggen: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content:
+                Text('Fehler beim Ausloggen. Bitte versuchen Sie es erneut.')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    String username = "Daniel"; // Replace with actual username
-    String profileImageUrl =
-        'assets/images/hintergründe/hslogo 5.png'; // Replace with actual profile image URL
-
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
@@ -95,12 +135,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: AssetImage(profileImageUrl),
+                          backgroundImage: _profileImageUrl.isNotEmpty
+                              ? NetworkImage(_profileImageUrl)
+                              : AssetImage(
+                                      'assets/images/hintergründe/hslogo 5.png')
+                                  as ImageProvider,
+                          onBackgroundImageError: (_, __) {
+                            setState(() {
+                              _profileImageUrl =
+                                  'assets/images/hintergründe/hslogo 5.png';
+                            });
+                          },
                           radius: 30,
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          username,
+                          _username,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -132,8 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => AddFang(
                         databaseRepository: widget.databaseRepository,
                         authRepository: widget.authRepository,
-                        username: '',
-                        profileImageUrl: '',
+                        username: _username,
+                        profileImageUrl: _profileImageUrl,
                       ),
                     ),
                   );
@@ -153,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         authRepository: widget.authRepository,
                       ),
                     ),
-                  );
+                  ).then((_) => refreshProfile());
                 },
               ),
               ListTile(
@@ -215,13 +265,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/hintergründe/hslogo 5.png',
-                  height: 150,
-                  width: 150,
+                  height: 120, // Reduced by 20%
+                  width: 120, // Reduced by 20%
                 ),
               ),
             ),
             Positioned(
-              top: 180,
+              top: 150, // Adjusted to accommodate smaller logo
               left: 0,
               right: 0,
               bottom: 0,
@@ -240,10 +290,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         FangData fang = snapshot.data![index];
                         return Card(
-                          margin: const EdgeInsets.all(16),
-                          elevation: 5,
+                          margin: const EdgeInsets.all(12), // Reduced margin
+                          elevation: 4, // Slightly reduced elevation
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(
+                                12), // Slightly reduced border radius
                           ),
                           color: Colors.white.withOpacity(0.9),
                           child: InkWell(
@@ -264,16 +315,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Center(
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(15)),
+                                          top: Radius.circular(12)),
                                       child: Image.network(
                                         fang.bildUrl!,
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.9,
+                                                0.72, // Reduced by 20%
                                         height:
                                             (MediaQuery.of(context).size.width *
-                                                    0.9) *
-                                                (2 / 3),
+                                                    0.72) *
+                                                (2 / 3), // Reduced by 20%
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) {
@@ -281,15 +332,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.9,
+                                                0.72,
                                             height: (MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.9) *
+                                                    0.72) *
                                                 (2 / 3),
                                             color: Colors.grey[300],
                                             child: Icon(Icons.error,
-                                                color: Colors.red, size: 50),
+                                                color: Colors.red,
+                                                size: 40), // Reduced icon size
                                           );
                                         },
                                       ),
@@ -299,22 +351,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.9,
+                                          0.72,
                                       height:
                                           (MediaQuery.of(context).size.width *
-                                                  0.9) *
+                                                  0.72) *
                                               (2 / 3),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[300],
                                         borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(15)),
+                                            top: Radius.circular(12)),
                                       ),
                                       child: Icon(Icons.image_not_supported,
-                                          size: 50, color: Colors.grey[600]),
+                                          size: 40,
+                                          color: Colors
+                                              .grey[600]), // Reduced icon size
                                     ),
                                   ),
                                 Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(
+                                      12), // Reduced padding
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -322,23 +377,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Text(
                                         fang.fischart,
                                         style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight
+                                                .bold), // Reduced font size
                                       ),
-                                      SizedBox(height: 8),
+                                      SizedBox(height: 6), // Reduced spacing
                                       Text(
-                                          'Größe: ${fang.groesse.toStringAsFixed(2)} cm'),
+                                          'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  12)), // Reduced font size
                                       Text(
-                                          'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g'),
+                                          'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  12)), // Reduced font size
                                       Text(
-                                          'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}'),
-                                      Text('Gewässer: ${fang.gewaesser}'),
+                                          'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  12)), // Reduced font size
+                                      Text('Gewässer: ${fang.gewaesser}',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  12)), // Reduced font size
                                     ],
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                      horizontal: 12,
+                                      vertical: 6), // Reduced padding
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -349,16 +418,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fangId: fang.id,
                                             initialIsLiked: false,
                                           ),
-                                          SizedBox(width: 16),
+                                          SizedBox(
+                                              width: 12), // Reduced spacing
                                           FollowButton(
                                             userId: fang.userID,
                                             initialIsFollowing: false,
                                           ),
                                         ],
                                       ),
-                                      Text(fang.userID,
+                                      Text(fang.username,
                                           style: TextStyle(
-                                              fontStyle: FontStyle.italic)),
+                                              fontStyle: FontStyle.italic,
+                                              fontSize:
+                                                  12)), // Reduced font size
                                     ],
                                   ),
                                 ),
@@ -379,6 +451,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// LikeButton and FollowButton classes remain unchanged
+
+// LikeButton and FollowButton classes remain unchanged
 class LikeButton extends StatefulWidget {
   final String fangId;
   final bool initialIsLiked;
@@ -411,8 +486,8 @@ class _LikeButtonState extends State<LikeButton> {
         setState(() {
           isLiked = !isLiked;
         });
-        // Hier müssen Sie die Like-Funktion implementieren
-        // z.B. Firestore aktualisieren
+        // TODO: Implement like functionality
+        // e.g. Update Firestore
       },
     );
   }
@@ -450,8 +525,8 @@ class _FollowButtonState extends State<FollowButton> {
         setState(() {
           isFollowing = !isFollowing;
         });
-        // Hier müssen Sie die Follow-Funktion implementieren
-        // z.B. Firestore aktualisieren
+        // TODO: Implement follow functionality
+        // e.g. Update Firestore
       },
     );
   }
