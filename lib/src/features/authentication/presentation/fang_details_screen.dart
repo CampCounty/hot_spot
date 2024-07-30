@@ -12,7 +12,7 @@ class FangDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Fang Details'),
-        backgroundColor: Colors.green,
+        backgroundColor: Color.fromARGB(255, 191, 226, 193),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -59,7 +59,7 @@ class FangDetailsScreen extends StatelessWidget {
                     DetailRow(title: 'Naturköder', value: fang.naturkoeder!),
                   SizedBox(height: 16),
                   Text(
-                    'Gefangen von: ${fang.userID}',
+                    'Gefangen von: ${fang.username}', // Changed from userID to username
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ],

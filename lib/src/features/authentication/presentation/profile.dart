@@ -428,8 +428,11 @@ class _ProfileState extends State<Profile> {
       children: [
         Card(
           color: Colors.white.withOpacity(0.1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 Center(
@@ -449,7 +452,7 @@ class _ProfileState extends State<Profile> {
                         style: const TextStyle(
                           fontWeight: FontWeight.w800,
                           fontSize: 40.0,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -459,11 +462,11 @@ class _ProfileState extends State<Profile> {
                 ListTile(
                   title: Text(
                     'Wohnort: ${_locationController.text}',
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   subtitle: Text(
                     'Bundesland: $_selectedState',
-                    style: const TextStyle(color: Colors.black54),
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -476,8 +479,9 @@ class _ProfileState extends State<Profile> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color.fromARGB(255, 99, 116, 100),
+                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Color.fromARGB(255, 109, 130, 110).withOpacity(0.7),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -494,7 +498,7 @@ class _ProfileState extends State<Profile> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color.fromARGB(255, 42, 40, 40),
           ),
         ),
         const SizedBox(height: 10),
@@ -529,66 +533,132 @@ class _ProfileState extends State<Profile> {
           );
         }
 
+        int totalFishes = snapshot.data!.length;
+
         return Column(
           children: [
-            SizedBox(
-              height: 300, // Anpassbare Höhe
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  FangData fang = snapshot.data![index];
-                  return Card(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                FangData fang = snapshot.data![index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Card(
                     color: Colors.white.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                     child: ListTile(
                       leading: fang.bildUrl != null && fang.bildUrl!.isNotEmpty
-                          ? Image.network(
-                              fang.bildUrl!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error,
-                                    color: Colors.red);
-                              },
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                fang.bildUrl!,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.error,
+                                      color: Colors.red);
+                                },
+                              ),
                             )
                           : const Icon(Icons.image_not_supported,
                               color: Colors.white),
                       title: Text(
                         fang.fischart,
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 12, 56, 15),
+                            fontWeight: FontWeight.bold),
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}',
-                            style: const TextStyle(color: Colors.white70),
+                            style: TextStyle(
+                                color: const Color.fromARGB(179, 40, 39, 39)),
                           ),
                           Text(
                             'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
-                            style: const TextStyle(color: Colors.white70),
+                            style: TextStyle(
+                                color: const Color.fromARGB(179, 40, 39, 39)),
                           ),
                           Text(
                             'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
-                            style: const TextStyle(color: Colors.white70),
+                            style: TextStyle(
+                                color: const Color.fromARGB(179, 40, 39, 39)),
                           ),
                           Text(
                             'Gewässer: ${fang.gewaesser}',
-                            style: const TextStyle(color: Colors.white70),
+                            style: TextStyle(
+                                color: const Color.fromARGB(1179, 40, 39, 39)),
                           ),
                         ],
                       ),
                       onTap: () {
                         // Hier können Sie eine Detailansicht für den Fang öffnen
-                        // z.B. Navigator.push(context, MaterialPageRoute(...));
                       },
                     ),
-                  );
-                },
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Divider(
+                color: const Color.fromARGB(255, 19, 18, 18).withOpacity(0.3),
+                thickness: 1,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Zahlen & Fakten',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 105, 99, 99),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Card(
+              color: Colors.white.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Gesamtanzahl gefangener Fische',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.phishing_rounded,
+                            color: Colors.white, size: 40),
+                        const SizedBox(width: 10),
+                        Text(
+                          '$totalFishes',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -597,9 +667,7 @@ class _ProfileState extends State<Profile> {
               children: [
                 IconButton(
                   icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border),
-                  color: _isLiked
-                      ? const Color.fromARGB(255, 2, 111, 2)
-                      : Colors.white,
+                  color: _isLiked ? Colors.red : Colors.white,
                   onPressed: () {
                     setState(() {
                       _isLiked = !_isLiked;
@@ -609,7 +677,7 @@ class _ProfileState extends State<Profile> {
                 IconButton(
                   icon: Icon(
                       _isFollowing ? Icons.person_remove : Icons.person_add),
-                  color: const Color.fromARGB(255, 2, 111, 2),
+                  color: Colors.white,
                   onPressed: () {
                     setState(() {
                       _isFollowing = !_isFollowing;

@@ -265,13 +265,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/hintergründe/hslogo 5.png',
-                  height: 120, // Reduced by 20%
-                  width: 120, // Reduced by 20%
+                  height: 100,
+                  width: 100,
                 ),
               ),
             ),
             Positioned(
-              top: 150, // Adjusted to accommodate smaller logo
+              top: 130,
               left: 0,
               right: 0,
               bottom: 0,
@@ -289,152 +289,140 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         FangData fang = snapshot.data![index];
-                        return Card(
-                          margin: const EdgeInsets.all(12), // Reduced margin
-                          elevation: 4, // Slightly reduced elevation
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                12), // Slightly reduced border radius
-                          ),
-                          color: Colors.white.withOpacity(0.9),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FangDetailsScreen(fang: fang),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (fang.bildUrl != null &&
-                                    fang.bildUrl!.isNotEmpty)
-                                  Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(12)),
-                                      child: Image.network(
-                                        fang.bildUrl!,
+                        return Center(
+                          child: Card(
+                            margin: const EdgeInsets.all(8),
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            color: Color.fromARGB(255, 207, 226, 181)
+                                .withOpacity(0.9),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FangDetailsScreen(fang: fang),
+                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.85,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (fang.bildUrl != null &&
+                                        fang.bildUrl!.isNotEmpty)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(10)),
+                                        child: Image.network(
+                                          fang.bildUrl!,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.85,
+                                          height: (MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.85) *
+                                              (2 / 3),
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.85,
+                                              height: (MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.85) *
+                                                  (2 / 3),
+                                              color: Colors.grey[300],
+                                              child: Icon(Icons.error,
+                                                  color: Colors.red, size: 40),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    else
+                                      Container(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.72, // Reduced by 20%
+                                                0.85,
                                         height:
                                             (MediaQuery.of(context).size.width *
-                                                    0.72) *
-                                                (2 / 3), // Reduced by 20%
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.72,
-                                            height: (MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.72) *
+                                                    0.85) *
                                                 (2 / 3),
-                                            color: Colors.grey[300],
-                                            child: Icon(Icons.error,
-                                                color: Colors.red,
-                                                size: 40), // Reduced icon size
-                                          );
-                                        },
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(10)),
+                                        ),
+                                        child: Icon(Icons.image_not_supported,
+                                            size: 40, color: Colors.grey[600]),
                                       ),
-                                    ),
-                                  )
-                                else
-                                  Center(
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.72,
-                                      height:
-                                          (MediaQuery.of(context).size.width *
-                                                  0.72) *
-                                              (2 / 3),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(12)),
-                                      ),
-                                      child: Icon(Icons.image_not_supported,
-                                          size: 40,
-                                          color: Colors
-                                              .grey[600]), // Reduced icon size
-                                    ),
-                                  ),
-                                Padding(
-                                  padding: const EdgeInsets.all(
-                                      12), // Reduced padding
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        fang.fischart,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight
-                                                .bold), // Reduced font size
-                                      ),
-                                      SizedBox(height: 6), // Reduced spacing
-                                      Text(
-                                          'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
-                                          style: TextStyle(
-                                              fontSize:
-                                                  12)), // Reduced font size
-                                      Text(
-                                          'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
-                                          style: TextStyle(
-                                              fontSize:
-                                                  12)), // Reduced font size
-                                      Text(
-                                          'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}',
-                                          style: TextStyle(
-                                              fontSize:
-                                                  12)), // Reduced font size
-                                      Text('Gewässer: ${fang.gewaesser}',
-                                          style: TextStyle(
-                                              fontSize:
-                                                  12)), // Reduced font size
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6), // Reduced padding
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          LikeButton(
-                                            fangId: fang.id,
-                                            initialIsLiked: false,
+                                          Text(
+                                            fang.fischart,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(
-                                              width: 12), // Reduced spacing
-                                          FollowButton(
-                                            userId: fang.userID,
-                                            initialIsFollowing: false,
-                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                              'Größe: ${fang.groesse.toStringAsFixed(2)} cm',
+                                              style: TextStyle(fontSize: 14)),
+                                          Text(
+                                              'Gewicht: ${fang.gewicht.toStringAsFixed(2)} g',
+                                              style: TextStyle(fontSize: 14)),
+                                          Text(
+                                              'Gefangen am: ${DateFormat('dd.MM.yyyy').format(fang.datum)}',
+                                              style: TextStyle(fontSize: 14)),
+                                          Text('Gewässer: ${fang.gewaesser}',
+                                              style: TextStyle(fontSize: 14)),
                                         ],
                                       ),
-                                      Text(fang.username,
-                                          style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              fontSize:
-                                                  12)), // Reduced font size
-                                    ],
-                                  ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              LikeButton(
+                                                fangId: fang.id,
+                                                initialIsLiked: false,
+                                              ),
+                                              SizedBox(width: 10),
+                                              FollowButton(
+                                                userId: fang.userID,
+                                                initialIsFollowing: false,
+                                              ),
+                                            ],
+                                          ),
+                                          Text(fang.username,
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 14)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         );
@@ -450,6 +438,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// LikeButton and FollowButton classes remain unchanged
 
 // LikeButton and FollowButton classes remain unchanged
 
