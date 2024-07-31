@@ -10,20 +10,20 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 
-class Profile extends StatefulWidget {
+class ProfileWidget extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
-  const Profile({
-    Key? key,
+  const ProfileWidget({
+    super.key,
     required this.databaseRepository,
     required this.authRepository,
-  }) : super(key: key);
+  });
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<ProfileWidget> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<ProfileWidget> {
   File? _image;
   final _formKey = GlobalKey<FormState>();
 

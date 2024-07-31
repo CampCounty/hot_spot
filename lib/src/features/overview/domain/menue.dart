@@ -4,7 +4,7 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
-import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
+import 'package:hot_spot/src/features/authentication/presentation/profileScreen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -115,7 +115,7 @@ class CustomDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Profile(
+                    builder: (context) => ProfileWidget(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
                     ),

@@ -3,7 +3,7 @@ import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/fang_details_screen.dart';
-import 'package:hot_spot/src/features/authentication/presentation/profile.dart';
+import 'package:hot_spot/src/features/authentication/presentation/profileScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:intl/intl.dart';
@@ -198,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Profile(
+                      builder: (context) => ProfileWidget(
                         databaseRepository: widget.databaseRepository,
                         authRepository: widget.authRepository,
                       ),
