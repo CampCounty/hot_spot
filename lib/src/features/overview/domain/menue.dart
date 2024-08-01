@@ -118,6 +118,7 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => ProfileWidget(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
+                      userId: '',
                     ),
                   ),
                 );

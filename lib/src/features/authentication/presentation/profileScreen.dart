@@ -9,15 +9,18 @@ import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart'
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
+import 'package:hot_spot/src/features/authentication/presentation/statistik_screen.dart';
 
 class ProfileWidget extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
+  final String userId;
   const ProfileWidget({
-    super.key,
+    Key? key,
     required this.databaseRepository,
     required this.authRepository,
-  });
+    required this.userId,
+  }) : super(key: key);
 
   @override
   State<ProfileWidget> createState() => _ProfileState();
@@ -659,6 +662,32 @@ class _ProfileState extends State<ProfileWidget> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.bar_chart),
+              label: const Text('Zur Statistik'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatistikScreen(
+                      databaseRepository: widget.databaseRepository,
+                      authRepository: widget.authRepository,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                    Color.fromARGB(255, 109, 130, 110).withOpacity(0.7),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 5,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
             ),
             const SizedBox(height: 10),

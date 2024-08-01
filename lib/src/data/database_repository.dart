@@ -17,9 +17,10 @@ abstract class DatabaseRepository {
   Future<List<FangData>> getFaengeByGewaesser(String gewaesser);
   Future<int> countUserFaenge(String userId);
   Future<double> getAverageFangGroesse(String userId);
+  Future<List<FangData>> getLatestFaenge(String userID, {int limit = 10});
 }
 
-class FirebaseDatabaseRepository implements DatabaseRepository {
+class FirebaseDatabase implements DatabaseRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -35,7 +36,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
               FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      //print('Error getting user faenge: $e');
+      print('Error getting user faenge: $e');
       return [];
     }
   }
@@ -48,7 +49,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      //print('Error adding fang: $e');
+      print('Error adding fang: $e');
       rethrow;
     }
   }
@@ -65,7 +66,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
               FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      //print('Error getting faenge: $e');
+      print('Error getting faenge: $e');
       return [];
     }
   }
@@ -77,7 +78,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           await _firestore.collection('metadata').doc('fischarten').get();
       return List<String>.from(doc['arten'] as List);
     } catch (e) {
-      //print('Error getting fischarten: $e');
+      print('Error getting fischarten: $e');
       return [];
     }
   }
@@ -89,7 +90,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           await _firestore.collection('metadata').doc('angelmethoden').get();
       return List<String>.from(doc['methoden'] as List);
     } catch (e) {
-      //print('Error getting angelmethoden: $e');
+      print('Error getting angelmethoden: $e');
       return [];
     }
   }
@@ -101,7 +102,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           await _firestore.collection('metadata').doc('naturkoeder').get();
       return List<String>.from(doc['koeder'] as List);
     } catch (e) {
-      //print('Error getting naturkoeder: $e');
+      print('Error getting naturkoeder: $e');
       return [];
     }
   }
@@ -115,7 +116,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           .doc(userID)
           .set(profileData, SetOptions(merge: true));
     } catch (e) {
-      //print('Error saving user profile: $e');
+      print('Error saving user profile: $e');
       rethrow;
     }
   }
@@ -127,7 +128,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           await _firestore.collection('users').doc(userId).get();
       return doc.data() as Map<String, dynamic>?;
     } catch (e) {
-      //print('Error getting user profile: $e');
+      print('Error getting user profile: $e');
       return null;
     }
   }
@@ -137,7 +138,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
     try {
       await _firestore.collection('faenge').doc(fangId).update(newData);
     } catch (e) {
-      //print('Error updating fang: $e');
+      print('Error updating fang: $e');
       rethrow;
     }
   }
@@ -147,7 +148,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
     try {
       await _firestore.collection('faenge').doc(fangId).delete();
     } catch (e) {
-      //print('Error deleting fang: $e');
+      print('Error deleting fang: $e');
       rethrow;
     }
   }
@@ -165,7 +166,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
               FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      //print('Error getting top faenge: $e');
+      print('Error getting top faenge: $e');
       return [];
     }
   }
@@ -183,7 +184,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
               FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      //print('Error getting faenge by fischart: $e');
+      print('Error getting faenge by fischart: $e');
       return [];
     }
   }
@@ -201,7 +202,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
               FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      //print('Error getting faenge by gewaesser: $e');
+      print('Error getting faenge by gewaesser: $e');
       return [];
     }
   }
@@ -215,15 +216,16 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
           .get();
       return querySnapshot.size;
     } catch (e) {
-      //print('Error counting user faenge: $e');
+      print('Error counting user faenge: $e');
       return 0;
     }
   }
 
+  @override
   Future<List<FangData>> getLatestFaenge(String userID,
       {int limit = 10}) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      final snapshot = await _firestore
           .collection('faenge')
           .where('userID', isEqualTo: userID)
           .orderBy('datum', descending: true)
@@ -255,7 +257,7 @@ class FirebaseDatabaseRepository implements DatabaseRepository {
       }
       return totalGroesse / querySnapshot.size;
     } catch (e) {
-      //print('Error getting average fang groesse: $e');
+      print('Error getting average fang groesse: $e');
       return 0.0;
     }
   }

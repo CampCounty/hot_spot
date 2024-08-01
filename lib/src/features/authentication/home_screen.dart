@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-import 'package:hot_spot/src/features/authentication/presentation/fang_details_screen.dart';
+//import 'package:hot_spot/src/features/authentication/presentation/fang_details_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profileScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:intl/intl.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
+
+import 'presentation/fang_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -201,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => ProfileWidget(
                         databaseRepository: widget.databaseRepository,
                         authRepository: widget.authRepository,
+                        userId: widget.authRepository.getCurrentUserId(),
                       ),
                     ),
                   ).then((_) => refreshProfile());
@@ -303,8 +306,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        FangDetailsScreen(fang: fang),
+                                    builder: (context) => FangDetailsScreen(
+                                      fang: fang,
+                                      databaseRepository:
+                                          widget.databaseRepository,
+                                      authRepository: widget.authRepository,
+                                    ),
                                   ),
                                 );
                               },

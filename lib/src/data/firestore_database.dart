@@ -239,4 +239,10 @@ class FirestoreDatabase implements DatabaseRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<List<FangData>> getLatestFaenge(String userID, {int limit = 10}) {
+    // TODO: implement getLatestFaenge
+    throw UnimplementedError();
+  }
 }

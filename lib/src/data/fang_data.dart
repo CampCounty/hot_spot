@@ -12,6 +12,7 @@ class FangData {
   final String username;
   final String? angelmethode;
   final String? naturkoeder;
+  final String? koeder; // Neues Feld hinzugefügt
 
   FangData({
     required this.id,
@@ -25,6 +26,7 @@ class FangData {
     required this.username,
     this.angelmethode,
     this.naturkoeder,
+    this.koeder, // Neues Feld hinzugefügt
   });
 
   factory FangData.fromMap(Map<String, dynamic> map, String id) {
@@ -40,6 +42,7 @@ class FangData {
       username: map['username'] ?? 'Unbekannter Angler',
       angelmethode: map['angelmethode'],
       naturkoeder: map['naturkoeder'],
+      koeder: map['koeder'], // Neues Feld hinzugefügt
     );
   }
 
@@ -55,6 +58,7 @@ class FangData {
       'username': username,
       'angelmethode': angelmethode,
       'naturkoeder': naturkoeder,
+      'koeder': koeder, // Neues Feld hinzugefügt
     };
   }
 
@@ -70,6 +74,7 @@ class FangData {
     String? username,
     String? angelmethode,
     String? naturkoeder,
+    String? koeder, // Neues Feld hinzugefügt
   }) {
     return FangData(
       id: id ?? this.id,
@@ -83,11 +88,12 @@ class FangData {
       username: username ?? this.username,
       angelmethode: angelmethode ?? this.angelmethode,
       naturkoeder: naturkoeder ?? this.naturkoeder,
+      koeder: koeder ?? this.koeder, // Neues Feld hinzugefügt
     );
   }
 
   @override
   String toString() {
-    return 'FangData(id: $id, fischart: $fischart, groesse: $groesse, gewicht: $gewicht, datum: $datum, gewaesser: $gewaesser, bildUrl: $bildUrl, userID: $userID, username: $username, angelmethode: $angelmethode, naturkoeder: $naturkoeder)';
+    return 'FangData(id: $id, fischart: $fischart, groesse: $groesse, gewicht: $gewicht, datum: $datum, gewaesser: $gewaesser, bildUrl: $bildUrl, userID: $userID, username: $username, angelmethode: $angelmethode, naturkoeder: $naturkoeder, koeder: $koeder)';
   }
 }
