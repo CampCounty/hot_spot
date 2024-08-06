@@ -8,20 +8,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
+import 'package:hot_spot/src/features/overview/domain/menue.dart'; // Import für CustomDrawer
 
 class AddFang2 extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
+  final String username;
+  final String profileImageUrl;
   final FangData fangData;
 
   const AddFang2({
-    super.key,
+    Key? key,
     required this.databaseRepository,
     required this.authRepository,
-    required String username,
-    required String profileImageUrl,
+    required this.username,
+    required this.profileImageUrl,
     required this.fangData,
-  });
+  }) : super(key: key);
 
   @override
   State<AddFang2> createState() => _AddFang2State();
@@ -148,8 +151,8 @@ class _AddFang2State extends State<AddFang2> {
           builder: (context) => HomeScreen(
             databaseRepository: widget.databaseRepository,
             authRepository: widget.authRepository,
-            profileImageUrl: '',
-            username: '',
+            profileImageUrl: widget.profileImageUrl,
+            username: widget.username,
           ),
         ),
         (Route<dynamic> route) => false,
@@ -166,6 +169,17 @@ class _AddFang2State extends State<AddFang2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Fang eintragen 2'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      drawer: CustomDrawer(
+        username: widget.username,
+        profileImageUrl: widget.profileImageUrl,
+        databaseRepository: widget.databaseRepository,
+        authRepository: widget.authRepository,
+      ),
       body: Stack(
         children: [
           Container(

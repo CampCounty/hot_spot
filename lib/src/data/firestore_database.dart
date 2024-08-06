@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
-import 'package:logger/logger.dart'; // Importieren Sie ein Logging-Framework
+import 'package:logger/logger.dart';
 
 class FirestoreDatabase implements DatabaseRepository {
   final FirebaseFirestore _firestore;
-  final Logger _logger = Logger(); // Initialisieren Sie den Logger
+  final Logger _logger = Logger();
 
   FirestoreDatabase(this._firestore);
 
@@ -194,24 +194,23 @@ class FirestoreDatabase implements DatabaseRepository {
   @override
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {
     if (userId.isEmpty) {
-      print('Warnung: Versuch, ein Benutzerprofil mit leerer userId abzurufen');
+      _logger.w(
+          'Warnung: Versuch, ein Benutzerprofil mit leerer userId abzurufen');
       return null;
     }
 
     try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(userId).get();
 
       if (doc.exists) {
         return doc.data() as Map<String, dynamic>;
       } else {
-        print('Kein Benutzerprofil gefunden für userId: $userId');
+        _logger.w('Kein Benutzerprofil gefunden für userId: $userId');
         return null;
       }
     } catch (e) {
-      print('Fehler beim Abrufen des Benutzerprofils: $e');
+      _logger.e('Fehler beim Abrufen des Benutzerprofils: $e');
       return null;
     }
   }
@@ -241,8 +240,174 @@ class FirestoreDatabase implements DatabaseRepository {
   }
 
   @override
-  Future<List<FangData>> getLatestFaenge(String userID, {int limit = 10}) {
-    // TODO: implement getLatestFaenge
+  Future<List<FangData>> getLatestFaenge(String userID,
+      {int limit = 10}) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('userID', isEqualTo: userID)
+          .orderBy('datum', descending: true)
+          .limit(limit)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) =>
+              FangData.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      _logger.e('Error getting latest faenge: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<void> addComment(
+      String fangId, String userId, String commentText, String username) async {
+    try {
+      _logger.i(
+          'Versuche Kommentar hinzuzufügen: fangId=$fangId, userId=$userId, username=$username');
+      await _firestore
+          .collection('faenge')
+          .doc(fangId)
+          .collection('comments')
+          .add({
+        'userId': userId,
+        'username': username,
+        'commentText': commentText,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      _logger.i('Kommentar erfolgreich hinzugefügt');
+    } catch (e) {
+      _logger.e('Fehler beim Hinzufügen des Kommentars: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getComments(String fangId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .doc(fangId)
+          .collection('comments')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+    } catch (e) {
+      _logger.e('Fehler beim Abrufen der Kommentare: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<String> getUsername(String userId) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(userId).get();
+      return (doc.data() as Map<String, dynamic>)['username'] ??
+          'Unbekannter Benutzer';
+    } catch (e) {
+      _logger.e('Fehler beim Abrufen des Benutzernamens: $e');
+      return 'Unbekannter Benutzer';
+    }
+  }
+
+  @override
+  Future<bool> isPersoenlicheBestleistung(
+      String userId, String fischart, double groesse) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('faenge')
+          .where('userID', isEqualTo: userId)
+          .where('fischart', isEqualTo: fischart)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return true;
+      }
+
+      double maxGroesse = 0;
+      for (var doc in querySnapshot.docs) {
+        double currentGroesse =
+            (doc.data() as Map<String, dynamic>)['groesse'] ?? 0;
+        if (currentGroesse > maxGroesse) {
+          maxGroesse = currentGroesse;
+        }
+      }
+
+      return groesse > maxGroesse;
+    } catch (e) {
+      _logger.e('Error checking personal best: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<void> updateAllFaengePBStatus() async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore.collection('faenge').get();
+
+      Map<String, double> userFischartMaxGroesse = {};
+
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String userId = data['userID'];
+        String fischart = data['fischart'];
+        double groesse = data['groesse'];
+
+        String key = '$userId-$fischart';
+        if (userFischartMaxGroesse.containsKey(key)) {
+          if (groesse > userFischartMaxGroesse[key]!) {
+            userFischartMaxGroesse[key] = groesse;
+          }
+        } else {
+          userFischartMaxGroesse[key] = groesse;
+        }
+      }
+
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String userId = data['userID'];
+        String fischart = data['fischart'];
+        double groesse = data['groesse'];
+
+        String key = '$userId-$fischart';
+        bool isPB = groesse == userFischartMaxGroesse[key];
+
+        await doc.reference.update({'isPB': isPB});
+      }
+    } catch (e) {
+      _logger.e('Error updating all faenge PB status: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getMarkers() {
+    // TODO: implement getMarkers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> saveMarker(
+      String gewaesserName, double latitude, double longitude) {
+    // TODO: implement saveMarker
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateProfilePicture(String userId, String imageUrl) {
+    // TODO: implement updateProfilePicture
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateUserProfile(
+      String userId, Map<String, dynamic> updatedData) {
+    // TODO: implement updateUserProfile
     throw UnimplementedError();
   }
 }

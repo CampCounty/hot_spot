@@ -4,6 +4,7 @@ import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/home_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
 import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
+import 'package:hot_spot/src/features/authentication/presentation/map_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profileScreen.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
 
@@ -80,8 +81,8 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => HomeScreen(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
-                      username: '',
-                      profileImageUrl: '',
+                      username: username,
+                      profileImageUrl: profileImageUrl,
                     ),
                   ),
                 );
@@ -99,8 +100,8 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => AddFang(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
-                      username: '',
-                      profileImageUrl: '',
+                      username: username,
+                      profileImageUrl: profileImageUrl,
                     ),
                   ),
                 );
@@ -136,8 +137,27 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => Hitliste(
                       databaseRepository: databaseRepository,
                       authRepository: authRepository,
-                      username: '',
-                      profileImageUrl: '',
+                      username: username,
+                      profileImageUrl: profileImageUrl,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading:
+                  const Icon(Icons.map, color: Color.fromARGB(255, 43, 43, 43)),
+              title: const Text('Karte',
+                  style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapScreen(
+                      databaseRepository: databaseRepository,
+                      authRepository: authRepository,
+                      username: username,
+                      profileImageUrl: profileImageUrl,
                     ),
                   ),
                 );
@@ -169,7 +189,7 @@ class CustomDrawer extends StatelessWidget {
               title: const Text('Logout',
                   style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => StartScreen(

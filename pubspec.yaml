@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   cloud_firestore: ^5.0.2
+  dio: ^5.5.0+1
   drop_menu: ^0.0.6
   fan_floating_menu: ^0.0.1
   firebase_auth: ^5.1.1
@@ -16,13 +17,23 @@ dependencies:
   fl_chart: ^0.68.0
   flutter:
     sdk: flutter
+  flutter_map: ^5.0.0
   flutter_open_street_map: ^0.0.4
+  flutter_osm_interface: ^1.1.0
+  flutter_osm_plugin: ^1.2.0
+  geocoding: ^3.0.0
   geolocator: ^12.0.0
   image_picker: ^1.1.2
   intl: ^0.19.0
+  latlong2: ^0.9.1
   logger: ^2.4.0
+  marquee: ^2.2.3
+  permission_handler: ^11.3.1
+  plugin_platform_interface: ^2.1.8
   provider: ^6.1.2
   shared_preferences: ^2.2.3
+  url_launcher: ^6.3.0
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:

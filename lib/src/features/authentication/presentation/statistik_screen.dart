@@ -237,11 +237,16 @@ class _StatistikScreenState extends State<StatistikScreen> {
           List<FangData> faenge = snapshot.data!;
           Map<String, int> fischArtenCount = {};
           Map<String, int> koederCount = {};
+          Map<String, int> gewaesserCount = {};
           for (var fang in faenge) {
             fischArtenCount[fang.fischart] =
                 (fischArtenCount[fang.fischart] ?? 0) + 1;
             if (fang.koeder != null) {
               koederCount[fang.koeder!] = (koederCount[fang.koeder!] ?? 0) + 1;
+            }
+            if (fang.gewaesser != null) {
+              gewaesserCount[fang.gewaesser!] =
+                  (gewaesserCount[fang.gewaesser!] ?? 0) + 1;
             }
           }
 
@@ -295,6 +300,29 @@ class _StatistikScreenState extends State<StatistikScreen> {
                           ),
                           const SizedBox(height: 20),
                           _buildLegend(koederCount),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  if (gewaesserCount.isNotEmpty) ...[
+                    _buildCard(
+                      'Am häufigsten beangelte Gewässer',
+                      content: Column(
+                        children: [
+                          SizedBox(
+                            height: 300,
+                            child: PieChart(
+                              PieChartData(
+                                sections:
+                                    _createPieChartSections(gewaesserCount),
+                                sectionsSpace: 0,
+                                centerSpaceRadius: 40,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          _buildLegend(gewaesserCount),
                         ],
                       ),
                     ),

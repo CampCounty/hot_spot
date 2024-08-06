@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/authentication/presentation/add_fang.dart';
-//import 'package:hot_spot/src/features/authentication/presentation/fang_details_screen.dart';
 import 'package:hot_spot/src/features/authentication/presentation/profileScreen.dart';
+import 'package:hot_spot/src/features/authentication/presentation/hitliste.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hot_spot/src/data/fang_data.dart';
 import 'package:intl/intl.dart';
 import 'package:hot_spot/src/features/overview/presentation/startscreen.dart';
-
 import 'presentation/fang_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -80,6 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<int> _getCommentCount(String fangId) async {
+    List<Map<String, dynamic>> comments =
+        await widget.databaseRepository.getComments(fangId);
+    return comments.length;
+  }
+
   void _logout() async {
     try {
       await widget.authRepository.logout();
@@ -102,6 +107,63 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text('Fehler beim Ausloggen. Bitte versuchen Sie es erneut.')),
       );
     }
+  }
+
+  void _showCommentDialog(BuildContext context, String fangId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String commentText = '';
+
+        return AlertDialog(
+          title: Text('Kommentar hinzufügen'),
+          content: TextField(
+            onChanged: (value) {
+              commentText = value;
+            },
+            decoration: InputDecoration(hintText: "Gib deinen Kommentar ein"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Abbrechen'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Kommentieren'),
+              onPressed: () async {
+                if (commentText.isNotEmpty) {
+                  String userId = widget.authRepository.getCurrentUserId();
+                  if (userId.isNotEmpty) {
+                    String username =
+                        await widget.databaseRepository.getUsername(userId);
+                    await widget.databaseRepository
+                        .addComment(fangId, userId, commentText, username);
+                    Navigator.of(context).pop();
+                    setState(() {}); // Aktualisiert die UI
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Kommentar wurde hinzugefügt')),
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'Du musst angemeldet sein, um zu kommentieren')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Bitte gib einen Kommentar ein')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -163,77 +225,55 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              ListTile(
-                leading: const Icon(Icons.home,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Home',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.add,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Fang melden',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddFang(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                        username: _username,
-                        profileImageUrl: _profileImageUrl,
-                      ),
+              _buildDrawerItem(
+                  Icons.home, 'Home', () => Navigator.pop(context)),
+              _buildDrawerItem(Icons.add, 'Fang melden', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddFang(
+                      databaseRepository: widget.databaseRepository,
+                      authRepository: widget.authRepository,
+                      username: _username,
+                      profileImageUrl: _profileImageUrl,
                     ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.person_2_rounded,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Profil',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileWidget(
-                        databaseRepository: widget.databaseRepository,
-                        authRepository: widget.authRepository,
-                        userId: widget.authRepository.getCurrentUserId(),
-                      ),
+                  ),
+                );
+              }),
+              _buildDrawerItem(Icons.person_2_rounded, 'Profil', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileWidget(
+                      databaseRepository: widget.databaseRepository,
+                      authRepository: widget.authRepository,
+                      userId: widget.authRepository.getCurrentUserId(),
                     ),
-                  ).then((_) => refreshProfile());
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Settings',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.info,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('About',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout,
-                    color: Color.fromARGB(255, 43, 43, 43)),
-                title: const Text('Logout',
-                    style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
-                onTap: _logout,
-              ),
+                  ),
+                ).then((_) => refreshProfile());
+              }),
+              _buildDrawerItem(Icons.list_alt, 'Hitliste', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Hitliste(
+                      databaseRepository: widget.databaseRepository,
+                      authRepository: widget.authRepository,
+                      username: _username,
+                      profileImageUrl: _profileImageUrl,
+                    ),
+                  ),
+                );
+              }),
+              _buildDrawerItem(Icons.settings, 'Settings', () {
+                Navigator.pop(context);
+                // TODO: Implementieren Sie die Navigation zur Einstellungsseite
+              }),
+              _buildDrawerItem(Icons.info, 'About', () {
+                Navigator.pop(context);
+                // TODO: Implementieren Sie die Navigation zur About-Seite
+              }),
+              _buildDrawerItem(Icons.logout, 'Logout', _logout),
             ],
           ),
         ),
@@ -418,6 +458,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 userId: fang.userID,
                                                 initialIsFollowing: false,
                                               ),
+                                              SizedBox(width: 10),
+                                              FutureBuilder<int>(
+                                                future:
+                                                    _getCommentCount(fang.id),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircularProgressIndicator(
+                                                        strokeWidth: 2);
+                                                  }
+                                                  int commentCount =
+                                                      snapshot.data ?? 0;
+                                                  return Row(
+                                                    children: [
+                                                      IconButton(
+                                                        icon:
+                                                            Icon(Icons.comment),
+                                                        onPressed: () {
+                                                          _showCommentDialog(
+                                                              context, fang.id);
+                                                        },
+                                                      ),
+                                                      Text('$commentCount'),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
                                             ],
                                           ),
                                           Text(fang.username,
@@ -444,13 +512,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Color.fromARGB(255, 43, 43, 43)),
+      title:
+          Text(title, style: TextStyle(color: Color.fromARGB(255, 43, 43, 43))),
+      onTap: onTap,
+    );
+  }
 }
 
-// LikeButton and FollowButton classes remain unchanged
-
-// LikeButton and FollowButton classes remain unchanged
-
-// LikeButton and FollowButton classes remain unchanged
 class LikeButton extends StatefulWidget {
   final String fangId;
   final bool initialIsLiked;

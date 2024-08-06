@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:hot_spot/src/data/auth_repository.dart';
 import 'package:hot_spot/src/data/database_repository.dart';
 import 'package:hot_spot/src/features/overview/domain/menue.dart';
+import 'package:hot_spot/src/data/fang_data.dart';
 
 class Hitliste extends StatefulWidget {
   final DatabaseRepository databaseRepository;
   final AuthRepository authRepository;
   const Hitliste(
-      {super.key,
+      {Key? key,
       required this.databaseRepository,
       required this.authRepository,
       required String username,
-      required String profileImageUrl});
+      required String profileImageUrl})
+      : super(key: key);
 
   @override
   State<Hitliste> createState() => _HitlisteState();
@@ -21,13 +23,7 @@ class _HitlisteState extends State<Hitliste> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedFish;
   List<String> fishTypes = [];
-  List<Map<String, String>> tableData = [
-    {"Username": "Daniel", "Größe": "50cm", "Gewässer": "See"},
-    {"Username": "Anna", "Größe": "45cm", "Gewässer": "Fluss"},
-    {"Username": "Max", "Größe": "55cm", "Gewässer": "Teich"},
-    {"Username": "Paul", "Größe": "40cm", "Gewässer": "Fluss"},
-    // Weitere Einträge hier
-  ];
+  List<FangData> fangList = [];
 
   @override
   void initState() {
@@ -41,30 +37,29 @@ class _HitlisteState extends State<Hitliste> {
       fishTypes = types;
       if (fishTypes.isNotEmpty) {
         selectedFish = fishTypes.first;
+        _loadFaenge(selectedFish!);
       }
+    });
+  }
+
+  Future<void> _loadFaenge(String fischart) async {
+    List<FangData> faenge =
+        await widget.databaseRepository.getFaengeByFischart(fischart);
+    setState(() {
+      fangList = faenge;
+      fangList.sort((a, b) =>
+          b.groesse.compareTo(a.groesse)); // Sortiere nach Größe absteigend
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String username =
-        "Daniel"; // Ersetzen Sie dies durch den tatsächlichen Benutzernamen
-    String profileImageUrl =
-        'assets/images/hintergründe/hslogo 5.png'; // Ersetzen Sie dies durch die tatsächliche URL des Profilbildes
-
-    // Sortiere tableData basierend auf der Größe (Größte zuerst)
-    List<Map<String, String>> sortedTableData = List.from(tableData);
-    sortedTableData.sort((a, b) {
-      final sizeA = _parseSize(a['Größe'] ?? '0cm');
-      final sizeB = _parseSize(b['Größe'] ?? '0cm');
-      return sizeB.compareTo(sizeA); // Größere Größe zuerst
-    });
-
     return Scaffold(
       key: _scaffoldKey,
       drawer: CustomDrawer(
-        username: username,
-        profileImageUrl: profileImageUrl,
+        username:
+            "Username", // Ersetzen Sie dies durch den tatsächlichen Benutzernamen
+        profileImageUrl: 'assets/images/hintergründe/hslogo 5.png',
         databaseRepository: widget.databaseRepository,
         authRepository: widget.authRepository,
       ),
@@ -73,9 +68,7 @@ class _HitlisteState extends State<Hitliste> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/hintergründe/Blancscreen.png',
-                ),
+                image: AssetImage('assets/images/hintergründe/Blancscreen.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -101,24 +94,19 @@ class _HitlisteState extends State<Hitliste> {
                     "Hitliste",
                     style:
                         TextStyle(fontWeight: FontWeight.w800, fontSize: 40.0),
-                    textAlign: TextAlign.center, // Zentriert den Text
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons
-                          .arrow_drop_down), // Icon links neben der Dropdown-Liste
+                      const Icon(Icons.arrow_drop_down),
                       const SizedBox(width: 10),
                       Container(
-                        width: 200, // Angepasste Breite der Dropdown-Liste
+                        width: 200,
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black, // Farbe der Umrandung
-                            width: 2.0, // Breite der Umrandung
-                          ),
-                          borderRadius:
-                              BorderRadius.circular(5.0), // Abgerundete Ecken
+                          border: Border.all(color: Colors.black, width: 2.0),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         child: DropdownButton<String>(
                           value: selectedFish,
@@ -133,183 +121,62 @@ class _HitlisteState extends State<Hitliste> {
                           onChanged: (newValue) {
                             setState(() {
                               selectedFish = newValue;
+                              _loadFaenge(selectedFish!);
                             });
                           },
-                          underline:
-                              Container(), // Um die Standard-Unterlinie zu entfernen
-                          dropdownColor: Colors
-                              .white, // Hintergrundfarbe des Dropdown-Menüs
+                          underline: Container(),
+                          dropdownColor: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const Icon(Icons
-                          .arrow_drop_down), // Icon rechts neben der Dropdown-Liste
+                      const Icon(Icons.arrow_drop_down),
                     ],
                   ),
                   const SizedBox(height: 10),
                   const Text(
                     'Wähle eine Fischart',
                     style: TextStyle(fontSize: 16.0),
-                    textAlign: TextAlign.center, // Zentriert den Text
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  // Tabelle hinzufügen
-                  Container(
-                    width: double
-                        .infinity, // Setzt die Breite auf 100% des Containers
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                          8.0), // Abgerundete Ecken für den Container
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2), // Schattenfarbe
-                          spreadRadius: 2, // Verbreiterung des Schattens
-                          blurRadius: 5, // Unschärfe des Schattens
-                          offset:
-                              const Offset(0, 4), // Verschiebung des Schattens
-                        ),
-                      ],
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection:
-                          Axis.horizontal, // Ermöglicht horizontales Scrollen
-                      child: DataTable(
-                        columnSpacing: 16.0, // Abstand zwischen den Spalten
-                        dataRowHeight: 50.0, // Höhe der Zeilen
-                        headingRowHeight: 56.0, // Höhe der Überschrift
-                        columns: [
-                          DataColumn(
-                            label: Container(
-                              width: 50, // Breite der Spalte
-                              child: const Center(
-                                child: Text(
-                                  'Platz',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold, // Fett
-                                    color: Color.fromARGB(255, 243, 241,
-                                        241), // Farbe der Überschrift
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Container(
-                              width: 150, // Breite der Spalte
-                              child: const Center(
-                                child: Text(
-                                  'Username',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold, // Fett
-                                    color: Color.fromARGB(255, 243, 241,
-                                        241), // Farbe der Überschrift
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Container(
-                              width: 50, // Breite der Spalte
-                              child: const Center(
-                                child: Text(
-                                  'Größe',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold, // Fett
-                                    color: Color.fromARGB(255, 243, 241,
-                                        241), // Farbe der Überschrift
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Container(
-                              width: 150, // Breite der Spalte
-                              child: const Center(
-                                child: Text(
-                                  'Gewässer',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold, // Fett
-                                    color: Color.fromARGB(255, 243, 241,
-                                        241), // Farbe der Überschrift
-                                  ),
-                                ),
-                              ),
-                            ),
+                  if (fangList.isEmpty)
+                    const Text("Noch keine Daten",
+                        style: TextStyle(fontSize: 18))
+                  else
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 4),
                           ),
                         ],
-                        rows: List<DataRow>.generate(
-                          sortedTableData.length,
-                          (index) {
-                            final data = sortedTableData[index];
-                            final isTopThree = index <
-                                3; // Überprüfen, ob der Platz einer der ersten drei ist
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      (index + 1).toString(),
-                                      style: TextStyle(
-                                        fontWeight: isTopThree
-                                            ? FontWeight.bold
-                                            : FontWeight
-                                                .normal, // Fett für die ersten drei Plätze
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      data['Username'] ?? '',
-                                      style: TextStyle(
-                                        fontWeight: isTopThree
-                                            ? FontWeight.bold
-                                            : FontWeight
-                                                .normal, // Fett für die ersten drei Plätze
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      data['Größe'] ?? '',
-                                      style: TextStyle(
-                                        fontWeight: isTopThree
-                                            ? FontWeight.bold
-                                            : FontWeight
-                                                .normal, // Fett für die ersten drei Plätze
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      data['Gewässer'] ?? '',
-                                      style: TextStyle(
-                                        fontWeight: isTopThree
-                                            ? FontWeight.bold
-                                            : FontWeight
-                                                .normal, // Fett für die ersten drei Plätze
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                      ),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columnSpacing: 16.0,
+                          dataRowHeight: 50.0,
+                          headingRowHeight: 56.0,
+                          columns: [
+                            DataColumn(label: _buildColumnHeader('Platz', 50)),
+                            DataColumn(
+                                label: _buildColumnHeader('Username', 150)),
+                            DataColumn(label: _buildColumnHeader('Größe', 50)),
+                            DataColumn(
+                                label: _buildColumnHeader('Gewässer', 150)),
+                          ],
+                          rows: List<DataRow>.generate(
+                            fangList.length,
+                            (index) => _buildDataRow(index, fangList[index]),
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -329,8 +196,36 @@ class _HitlisteState extends State<Hitliste> {
     );
   }
 
-  int _parseSize(String size) {
-    final match = RegExp(r'(\d+)').firstMatch(size);
-    return match != null ? int.parse(match.group(0)!) : 0;
+  Widget _buildColumnHeader(String text, double width) {
+    return Container(
+      width: width,
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 243, 241, 241),
+          ),
+        ),
+      ),
+    );
+  }
+
+  DataRow _buildDataRow(int index, FangData fang) {
+    final isTopThree = index < 3;
+    final textStyle = TextStyle(
+      fontWeight: isTopThree ? FontWeight.bold : FontWeight.normal,
+    );
+
+    return DataRow(
+      cells: [
+        DataCell(Center(child: Text((index + 1).toString(), style: textStyle))),
+        DataCell(Center(child: Text(fang.username, style: textStyle))),
+        DataCell(Center(
+            child: Text('${fang.groesse.toStringAsFixed(2)} cm',
+                style: textStyle))),
+        DataCell(Center(child: Text(fang.gewaesser, style: textStyle))),
+      ],
+    );
   }
 }

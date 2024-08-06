@@ -2,98 +2,149 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FangData {
   final String id;
+  final String userID;
+  final String username;
   final String fischart;
   final double groesse;
   final double gewicht;
-  final DateTime datum;
   final String gewaesser;
+  final DateTime datum;
   final String? bildUrl;
-  final String userID;
-  final String username;
   final String? angelmethode;
+  final String? koeder;
+  final String? koederTyp;
   final String? naturkoeder;
-  final String? koeder; // Neues Feld hinzugefügt
+  final bool isPB;
 
   FangData({
     required this.id,
+    required this.userID,
+    required this.username,
     required this.fischart,
     required this.groesse,
     required this.gewicht,
-    required this.datum,
     required this.gewaesser,
+    required this.datum,
     this.bildUrl,
-    required this.userID,
-    required this.username,
     this.angelmethode,
+    this.koeder,
+    this.koederTyp,
     this.naturkoeder,
-    this.koeder, // Neues Feld hinzugefügt
+    this.isPB = false,
   });
 
   factory FangData.fromMap(Map<String, dynamic> map, String id) {
     return FangData(
       id: id,
-      fischart: map['fischart'] ?? '',
-      groesse: (map['groesse'] ?? 0.0).toDouble(),
-      gewicht: (map['gewicht'] ?? 0.0).toDouble(),
-      datum: (map['datum'] as Timestamp).toDate(),
-      gewaesser: map['gewaesser'] ?? '',
-      bildUrl: map['bildUrl'],
       userID: map['userID'] ?? '',
-      username: map['username'] ?? 'Unbekannter Angler',
+      username: map['username'] ?? '',
+      fischart: map['fischart'] ?? '',
+      groesse: (map['groesse'] ?? 0).toDouble(),
+      gewicht: (map['gewicht'] ?? 0).toDouble(),
+      gewaesser: map['gewaesser'] ?? '',
+      datum: (map['datum'] as Timestamp).toDate(),
+      bildUrl: map['bildUrl'],
       angelmethode: map['angelmethode'],
+      koeder: map['koeder'],
+      koederTyp: map['koederTyp'],
       naturkoeder: map['naturkoeder'],
-      koeder: map['koeder'], // Neues Feld hinzugefügt
+      isPB: map['isPB'] ?? false,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'userID': userID,
+      'username': username,
       'fischart': fischart,
       'groesse': groesse,
       'gewicht': gewicht,
-      'datum': Timestamp.fromDate(datum),
       'gewaesser': gewaesser,
+      'datum': Timestamp.fromDate(datum),
       'bildUrl': bildUrl,
-      'userID': userID,
-      'username': username,
       'angelmethode': angelmethode,
+      'koeder': koeder,
+      'koederTyp': koederTyp,
       'naturkoeder': naturkoeder,
-      'koeder': koeder, // Neues Feld hinzugefügt
+      'isPB': isPB,
     };
   }
 
   FangData copyWith({
     String? id,
+    String? userID,
+    String? username,
     String? fischart,
     double? groesse,
     double? gewicht,
-    DateTime? datum,
     String? gewaesser,
+    DateTime? datum,
     String? bildUrl,
-    String? userID,
-    String? username,
     String? angelmethode,
+    String? koeder,
+    String? koederTyp,
     String? naturkoeder,
-    String? koeder, // Neues Feld hinzugefügt
+    bool? isPB,
   }) {
     return FangData(
       id: id ?? this.id,
+      userID: userID ?? this.userID,
+      username: username ?? this.username,
       fischart: fischart ?? this.fischart,
       groesse: groesse ?? this.groesse,
       gewicht: gewicht ?? this.gewicht,
-      datum: datum ?? this.datum,
       gewaesser: gewaesser ?? this.gewaesser,
+      datum: datum ?? this.datum,
       bildUrl: bildUrl ?? this.bildUrl,
-      userID: userID ?? this.userID,
-      username: username ?? this.username,
       angelmethode: angelmethode ?? this.angelmethode,
+      koeder: koeder ?? this.koeder,
+      koederTyp: koederTyp ?? this.koederTyp,
       naturkoeder: naturkoeder ?? this.naturkoeder,
-      koeder: koeder ?? this.koeder, // Neues Feld hinzugefügt
+      isPB: isPB ?? this.isPB,
     );
   }
 
   @override
   String toString() {
-    return 'FangData(id: $id, fischart: $fischart, groesse: $groesse, gewicht: $gewicht, datum: $datum, gewaesser: $gewaesser, bildUrl: $bildUrl, userID: $userID, username: $username, angelmethode: $angelmethode, naturkoeder: $naturkoeder, koeder: $koeder)';
+    return 'FangData(id: $id, userID: $userID, username: $username, fischart: $fischart, groesse: $groesse, gewicht: $gewicht, gewaesser: $gewaesser, datum: $datum, bildUrl: $bildUrl, angelmethode: $angelmethode, koeder: $koeder, koederTyp: $koederTyp, naturkoeder: $naturkoeder, isPB: $isPB)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is FangData &&
+        other.id == id &&
+        other.userID == userID &&
+        other.username == username &&
+        other.fischart == fischart &&
+        other.groesse == groesse &&
+        other.gewicht == gewicht &&
+        other.gewaesser == gewaesser &&
+        other.datum == datum &&
+        other.bildUrl == bildUrl &&
+        other.angelmethode == angelmethode &&
+        other.koeder == koeder &&
+        other.koederTyp == koederTyp &&
+        other.naturkoeder == naturkoeder &&
+        other.isPB == isPB;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        userID.hashCode ^
+        username.hashCode ^
+        fischart.hashCode ^
+        groesse.hashCode ^
+        gewicht.hashCode ^
+        gewaesser.hashCode ^
+        datum.hashCode ^
+        bildUrl.hashCode ^
+        angelmethode.hashCode ^
+        koeder.hashCode ^
+        koederTyp.hashCode ^
+        naturkoeder.hashCode ^
+        isPB.hashCode;
   }
 }

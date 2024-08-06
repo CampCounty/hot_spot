@@ -6,6 +6,7 @@ import 'package:hot_spot/src/features/authentication/presentation/add_fang2.dart
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hot_spot/src/features/overview/domain/menue.dart'; // Import für CustomDrawer
 
 class AddFang extends StatefulWidget {
   final DatabaseRepository databaseRepository;
@@ -188,6 +189,17 @@ class _AddFangState extends State<AddFang> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Fang eintragen'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      drawer: CustomDrawer(
+        username: widget.username,
+        profileImageUrl: widget.profileImageUrl,
+        databaseRepository: widget.databaseRepository,
+        authRepository: widget.authRepository,
+      ),
       body: Stack(
         children: [
           Container(
